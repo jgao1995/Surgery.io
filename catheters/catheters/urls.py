@@ -16,7 +16,10 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from plan_surgery.views import index
+
 urlpatterns = [
     url(r'^plan_surgery/', include('plan_surgery.urls'))
     url(r'^admin/', admin.site.urls),
+    url(r'^$', index)
 ]
