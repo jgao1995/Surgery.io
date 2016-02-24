@@ -5,16 +5,31 @@
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Bootstrap</title>
+      {% load staticfiles %}
+      <script src="{% static "scripts/jquery-1.12.1.min.js" %}"/>
       {% load bootstrap3 %}
       {% bootstrap_css %}
       {% bootstrap_javascript %}
+      {# Display django.contrib.messages as Bootstrap alerts #}
+      {% bootstrap_messages %}
+
+</script>
   </head>
   <body>
     <h1> Welcome to the surgery planning page! </h1>
     <h2> Please select all applicable catheters </h2>
-
-    <p> 
-      Dummy text here. Amit should try to pull stuf from the database and render it here. Very easy, only a few lines of code needed. I may finish it myself if i don't die. 
+    <p>
+      Dummy text here. Amit should try to pull stuf from the database and render it here. Very easy, only a few lines of code needed. I may finish it myself if i don't die.
     </p>
+
+  <form action="/url/to/submit/" method="post" class="form">
+  {% csrf_token %}
+  {% bootstrap_form form %}
+  {% buttons %}
+    <button type="submit" class="btn btn-primary">
+      {% bootstrap_icon "star" %} Submit
+    </button>
+  {% endbuttons %}
+</form>
   </body>
 </html>
