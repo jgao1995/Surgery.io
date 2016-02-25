@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django import forms
 from plan_surgery.models import Device, Surgery
 from collections import defaultdict
+import json
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Enter catheter name ', max_length=100)
@@ -17,8 +18,14 @@ def search(request):
     query = request.GET['query']
     query_set = Device.objects.filter(manufacturer__contains=query) | Device.objects.filter(brand_name__contains=query) | Device.objects.filter(description__contains=query)
     results = defaultdict(list)
+    import code
     for device in query_set:
-        results[device.product_type].append((device.manufacturer, device.brand_name, device.description, device.dimensions))
+        # code.interact(local=locals())
+        if isinstance(device.dimensions, unicode):
+            dims = json.loads(device.dimensions)
+        else:
+            dims = device.dimensions[0]
+        results[device.product_type].append((device.manufacturer, device.brand_name, device.description, dims))
     context = {'results': dict(results)}
     return render(request, 'plan_surgery/search_results.html', context)
 
