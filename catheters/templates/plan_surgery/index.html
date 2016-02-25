@@ -43,7 +43,10 @@
       <span class="input-group-btn">
         <button class="btn btn-default" type="button">Go!</button>
       </span>
-      <input type="text" class="form-control" placeholder="Search for...">
+      <form action="/plan_surgery/search" method="get">
+        <input type="text" name="query" class="form-control" placeholder="Search for...">
+        <input type="submit" value="Search">
+      </form>
     </div><!-- /input-group -->
   </div><!-- /.col-lg-6 -->
 </div><!-- /.row -->
