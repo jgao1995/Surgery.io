@@ -19,6 +19,6 @@ from django.contrib import admin
 from plan_surgery.views import index
 
 urlpatterns = [
-    url(r'^plan_surgery/', include('plan_surgery.urls')),
+    url(r'^', include('plan_surgery.urls')),
     url(r'^admin/', admin.site.urls),
 ]
