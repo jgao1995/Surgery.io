@@ -1,5 +1,6 @@
 from django.shortcuts import render_to_response, render
 from django.http import HttpResponse
+from plan_surgery.models import *
 
 # Create your views here.
 def index(request):
@@ -12,3 +13,10 @@ def plan_surgery(request):
 
   context = { "form" : NameForm() }
   return render(request, 'plan_surgery/index.html', context)
+
+def all(request):
+	devices = Device.objects.all()
+	device_strings = [str(d) for d in devices]
+	context = {"devices" : device_strings}
+	return render(request, 'plan_surgery/all.html', context)
+
