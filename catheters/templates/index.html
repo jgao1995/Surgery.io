@@ -4,7 +4,7 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Bootstrap</title>
+      <title>Catheter App</title>
       {% load bootstrap3 %}
       {% bootstrap_css %}
       {% bootstrap_javascript %}
@@ -14,13 +14,26 @@
 
   <body>
 
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+          <p> Catheter App </p>
+        </a>
+      </div>
+      <a href="/plan_surgery"><button type="button" class="btn btn-default navbar-btn">Plan Surgery</button></a>
+      <a href="/all"><button type="button" class="btn btn-default navbar-btn">View Catheters</button></a>
+    </div>
+  </nav>
+
+
   <div class="container">
     <div class="jumbotron">
-    <h1> Welcome to the surgery planning page! </h1>
-    <h2> Please select all applicable catheters </h2>
-    <p>
-      Dummy text here. Amit should try to pull stuf from the database and render it here. Very easy, only a few lines of code needed. I may finish it myself if i don't die.
-    </p>
+      <h1> Welcome to the surgery planning page! </h1>
+      <h2> Please select an action! </h2>
+      <a href="/plan_surgery">Plan Surgery </a> <br>
+      <a href="/admin">Admin </a> <br>
+      <a href="/all"> View all catheters </a> <br>
     </div>
   </div>
 
