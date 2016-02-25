@@ -18,7 +18,7 @@ class Device(models.Model):
     dimensions = JSONField()
 
     def __str__(self):
-        return '{}|{}|{}|{}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
+        return '{1} - {0}, {3} \n {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
 
 
 class Surgery(models.Model):
