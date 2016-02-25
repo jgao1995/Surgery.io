@@ -1,6 +1,26 @@
-<h1> All Devices </h1>
-<ul>
-{% for d in devices %}
-    <li>{{d}}</li>
-{% endfor %}
-</ul>
+<!doctype html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Bootstrap</title>
+      {% load bootstrap3 %}
+      {% bootstrap_css %}
+      {% bootstrap_javascript %}
+      {# Display django.contrib.messages as Bootstrap alerts #}
+      {% bootstrap_messages %}
+  	</head>
+
+<header> All Catheters </header>
+<body>
+	<div class="container">
+	 <ul class="list-group">
+	  {% for d in devices %}
+	  	<li class="list-group-item">{{ d }}</li>
+	  {% endfor %}
+	 </ul>
+	</div>
+</body>
+
+</html>
