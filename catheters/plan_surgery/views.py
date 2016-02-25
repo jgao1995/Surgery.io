@@ -4,6 +4,9 @@ from plan_surgery.models import *
 
 # Create your views here.
 def index(request):
+    return render(request, 'index.html')
+
+def plan_surgery(request):
   from django import forms
   class NameForm(forms.Form):
       your_name = forms.CharField(label='Enter catheter name ', max_length=100)
