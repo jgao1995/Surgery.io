@@ -12,8 +12,22 @@
       {% bootstrap_messages %}
   	</head>
 
-<header> All Catheters </header>
+
 <body>
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+          <p> Catheter App </p>
+        </a>
+      </div>
+      <a href="/plan_surgery"><button type="button" class="btn btn-default navbar-btn">Plan Surgery</button></a>
+      <a href="/all"><button type="button" class="btn btn-default navbar-btn">View Catheters</button></a>
+    </div>
+  </nav>
+
+  <h2> All Catheters </h2>
 	<div class="container">
 	 <ul class="list-group">
 	  {% for d in devices %}
