@@ -1,0 +1,13 @@
+{% for product_type, devices in results.items() %}
+    <b>{{product_type}}</b>
+    {% for device in devices %}
+        <li>Manufacturer: {{ device[0] }}</li>
+        <li>Brand Name: {{ device[1] }}</li>
+        <li>Description: {{ device[2] }}</li>
+        <li>Dimensions:</li>
+            {% {{ for key, value in device[2].items() }} %}
+                <li><i>{{ key }}</i>: {{value}}</li>
+            {% endfor %}
+    {% endfor %}
+{% endfor %}
+
