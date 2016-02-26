@@ -7,6 +7,6 @@
 
 ## Important stuff
 - Please make sure your `.gitignore` files has the following lines
-`ENV/
-*.pyc`
+- `ENV/`
+- `*.pyc`
 
