@@ -1,13 +1,31 @@
-{% for product_type, devices in results.items %}
-    <b>{{product_type}}</b>
-    {% for device in devices %}
-        <li>Manufacturer: {{ device.0 }}</li>
-        <li>Brand Name: {{ device.1 }}</li>
-        <li>Description: {{ device.2 }}</li>
-        <li>Dimensions:</li>
-            {% for key, value in device.3.items %}
-                <li><i>{{ key }}</i>: {{value}}</li>
-            {% endfor %}
-    {% endfor %}
-{% endfor %}
+<!doctype html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Bootstrap</title>
+      {% load bootstrap3 %}
+      {% bootstrap_css %}
+      {% bootstrap_javascript %}
+      {# Display django.contrib.messages as Bootstrap alerts #}
+      {% bootstrap_messages %}
+    </head>
 
+    <div class="container">
+      <ul class="list-group">
+      {% for product_type, devices in results.items %}
+          <b>{{product_type}}</b>
+          {% for device in devices %}
+              <li class="list-group-item">Manufacturer: {{ device.0 }}</li>
+              <li class="list-group-item">Brand Name: {{ device.1 }}</li>
+              <li class="list-group-item">Description: {{ device.2 }}</li>
+              <li class="list-group-item">Dimensions:</li>
+                  {% for key, value in device.3.items %}
+                      <li><i>{{ key }}</i>: {{value}}</li>
+                  {% endfor %}
+          {% endfor %}
+      {% endfor %}
+    </ul>
+</div>
+</html> 
