@@ -1,6 +1,6 @@
 <!doctype html>
 <html>
-    <head>
+   <head>
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -21,76 +21,22 @@
           <p> Catheter App </p>
         </a>
       </div>
-      <a href="/plan_surgery"><button type="button" class="btn btn-default navbar-btn">Plan Surgery</button></a>
-      <a href="/all"><button type="button" class="btn btn-default navbar-btn">View Catheters</button></a>
+      <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
+      <a class="navbar-brand" href="/all">View Catheters</a>
     </div>
   </nav>
 
-
-  <div class="container">
-  <form action="/url/to/submit/" method="post" class="form">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    {% buttons %}
-      <button type="submit" class="btn btn-primary">
-        {% bootstrap_icon "star" %} Submit
-      </button>
-    {% endbuttons %}
-  </form>
-  </div>
-
-  <div class = "container">
-  <div class="row">
-  <div class="col-lg-6">
-    <div class="input-group">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="button">Go!</button>
-      </span>
-      <form action="/plan_surgery/search" method="get">
-        <input type="text" name="query" class="form-control" placeholder="Search for...">
-        <input type="submit" value="Search">
-      </form>
-    </div><!-- /input-group -->
-  </div><!-- /.col-lg-6 -->
-</div><!-- /.row -->
-</div>
-
-<br>
-
-  <div class="container">
-  <div class="row">
-    <div class="col-lg-6">
-      <div class="input-group">
-        <div class="input-group-btn">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action <span class="caret"></span></button>
-          <ul class="dropdown-menu">
-            <li><a href="#">Action</a></li>
-            <li><a href="#">Another action</a></li>
-            <li><a href="#">Something else here</a></li>
-            <li role="separator" class="divider"></li>
-            <li><a href="#">Separated link</a></li>
-          </ul>
-        </div><!-- /btn-group -->
-        <input type="text" class="form-control" aria-label="...">
-      </div><!-- /input-group -->
-    </div><!-- /.col-lg-6 -->
-  </div><!-- /.row -->
-  </div>
-
-  <br>
-
-  <div class="container">
-  <div class="list-group">
-    <a href="#" class="list-group-item active">
-      <h4 class="list-group-item-heading">List group item heading</h4>
-      <p class="list-group-item-text">...</p>
-    </a>
-    <a href="#" class="list-group-item">
-    <h4 class="list-group-item-heading">List group item heading</h4>
-    <p class="list-group-item-text">...</p>
-  </a>
-  </div>
-  </div>
-
+    <div class = "container">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="input-group">
+            <form action="/plan_surgery/search" method="get">
+              <input type="text" name="query" class="form-control" placeholder="Search for...">
+              <input type="submit" value="Search">
+            </form>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+      </div><!-- /.row -->
+    </div>
   </body>
 </html>
