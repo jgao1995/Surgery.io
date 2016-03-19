@@ -3,3 +3,5 @@
 *.un
 *.pyc
 ENV/
+*.sqlite3
+log.txt
