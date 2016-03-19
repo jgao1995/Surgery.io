@@ -64,12 +64,31 @@ def plan_surgery(request):
     return render(request, 'plan_surgery/index.html', context)
 
 def all(request):
-	devices = Device.objects.all()
-	device_strings = [str(d) for d in devices]
-	context = {"devices" : device_strings}
-	return render(request, 'plan_surgery/all.html', context)
+    devices = Device.objects.all()
+    device_strings = [str(d) for d in devices]
+    context = {"devices" : device_strings}
+    return render(request, 'plan_surgery/all.html', context)
 
 def show(request, id):
     device = Device.objects.get(pk=id)
-    context = {"manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type}
+    context = {"manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id}
     return render(request, 'plan_surgery/show.html', context)
+
+def add_video(request, id):
+    device = Device.objects.get(pk=id)
+    links = json.load(device.useful_links)
+    link = request.GET['url']
+    links.append(link)
+    device.userful_links = json.dumps(links)
+    device.save()
+    return show(request, id)
+
+def add_comment(request, id):
+    device = Device.objects.get(pk=id)
+    notes = request.GET['comment']
+    current = device.notes
+    current += ("\n " + notes)
+    device.notes = current
+    device.save()
+    return show(request, id)
+

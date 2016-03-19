@@ -38,15 +38,18 @@
     <iframe name="iframe_a" id="iframe_a"></iframe>
   {% endfor %}
 
+  <form action="/device/{{ id }}/add_video" method="get">
+    <input type="text" name="url">
+    <input type="submit" value="Add video">
+  </form>
+
   <div class="form-group">
-      <label for="comment">Comment:</label>
+    <label for="comment">Comment:</label>
+    <form action="/device/{{ id }}/add_comment" method="get">
       <textarea class="form-control" rows="3" id="comment"></textarea>
-      <form action="/plan_surgery/search" method="get">
-            <input type="submit" value="Add notes">
-        </form>
+      <input type="submit" value="Add notes">
+    </form>
   </div>
-
-
 
 </body>
 
