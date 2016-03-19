@@ -63,3 +63,8 @@ def all(request):
 	device_strings = [str(d) for d in devices]
 	context = {"devices" : device_strings}
 	return render(request, 'plan_surgery/all.html', context)
+
+def show(request, id):
+    device = Device.objects.get(pk=id)
+    context = {"manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type}
+    return render(request, 'plan_surgery/show.html', context)
