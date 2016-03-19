@@ -32,6 +32,22 @@
   Brand: {{ brand_name }} <br>
   Description: {{description}} <br>
   Product Type: {{product_type}} <br>
+
+  {% for key, value in device.4.items %}
+    <p><a class="one" href="{{ value }}" target="iframe_a"></a></p>
+    <iframe name="iframe_a" id="iframe_a"></iframe>
+  {% endfor %}
+
+  <div class="form-group">
+      <label for="comment">Comment:</label>
+      <textarea class="form-control" rows="3" id="comment"></textarea>
+      <form action="/plan_surgery/search" method="get">
+            <input type="submit" value="Add notes">
+        </form>
+  </div>
+
+
+
 </body>
 
 </html>
