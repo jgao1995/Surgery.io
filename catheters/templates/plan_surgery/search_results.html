@@ -32,15 +32,19 @@
               <li class="list-group-item">Manufacturer: {{ device.0 }}</li>
               <li class="list-group-item">Brand Name: {{ device.1 }}</li>
               <li class="list-group-item">Description: {{ device.2 }}</li>
-              <li class="list-group-item">Dimensions:</li>
+              <li class="list-group-item">Dimensions:<br>
                   {% for key, value in device.3.items %}
-                      <li><i>{{ key }}</i>: {{value}}</li>
+                      <i>{{ key }}</i>: {{value}}
                   {% endfor %}
-              <li class="list-group-item">Helpful videos: </li>
-                  {% for key, value in device.4.items %}
-                      <p><a class="one" href="{{ value }}" target="iframe_a"></a></p>
-                      <iframe name="iframe_a" id="iframe_a"></iframe>
+              </li>
+              <li class="list-group-item">Helpful videos:<br>
+                  {% for link in device.5 %}
+                    <!-- Link: {{ link }}<br> -->
+                      <!-- <p><a class="one" href="{{ link }}" target="iframe_a"></a></p>
+                      <iframe name="iframe_a" id="iframe_a"></iframe> -->
+                      <iframe width="500" height="400" src="{{ link }}"></iframe>
                   {% endfor %}
+              </li>
           {% endfor %}
       {% endfor %}
     </ul>
