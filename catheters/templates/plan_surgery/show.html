@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>All</title>
+      {% load bootstrap3 %}
+      {% bootstrap_css %}
+      {% bootstrap_javascript %}
+      {# Display django.contrib.messages as Bootstrap alerts #}
+      {% bootstrap_messages %}
+    </head>
+
+<body>
+
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">
+          <p> Catheter App </p>
+        </a>
+      </div>
+      <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
+      <a class="navbar-brand" href="/all">View Catheters</a>
+      <a class="navbar-brand" href="/admin">Add Devices</a>
+    </div>
+  </nav>
+
+  <h2> Device Show </h2>
+  Device manufacturer: {{ manufacturer }} <br>
+  Brand: {{ brand_name }} <br>
+  Description: {{description}} <br>
+  Product Type: {{product_type}} <br>
+</body>
+
+</html>

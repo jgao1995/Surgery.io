@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'/search', views.search, name='Search'),
     url(r'/dsearch', views.dynamic_search, name="JSON Results"),
     url(r'^plan_surgery/$', views.plan_surgery, name='Plan Surgery'),
+    url(r'^device/(?P<id>[0-9]+)/$', views.show, name='Device show'),
 ]
