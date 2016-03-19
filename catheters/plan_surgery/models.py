@@ -64,20 +64,20 @@ def add_device_to_surgery(device):
     surgery.devices.add(device)
     return device
 
-class DeviceDependency(models.Model): 
+class DeviceDependency(models.Model):
     # device 1, device 2
     device_1 = models.ForeignKey(Device, related_name='device1_device')
     device_2 = models.ForeignKey(Device, related_name='device2_device')
     edgeType = models.IntegerField()
 
-    def __str__(self): 
+    def __str__(self):
         return '{0} to {1} has dependecy {2}'.format(self.device_1, self.device_2, self.edgeType)
 
 
 def createDependencies():
     devices = Device.objects.all()
     # for each device, look at the relationship with every other device
-    for device in devices: 
+    for device in devices:
         for other in devices:
             # look in the rules graph for the right rule
             rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
@@ -86,9 +86,9 @@ def createDependencies():
                 dependence.save()
                 print "Invalid Rule Graph"
                 continue
-            # get the rule out 
+            # get the rule out
             rule = rules[0]
-            # parse the fields to compare out of each 
+            # parse the fields to compare out of each
             dims_1 = getattr(device, 'dimensions', None)
             dims_2 = getattr(other, 'dimensions', None)
             if not (dims_1 and dims_2):
@@ -119,7 +119,7 @@ def updateDependencies():
 
     devices = Device.objects.all()
     # for each device, look at the relationship with every other device
-    for device in devices: 
+    for device in devices:
         for other in devices:
             # look in the rules graph for the right rule
             rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
@@ -131,7 +131,7 @@ def updateDependencies():
             dependence = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
             # get the rule out
             rule = rules[0]
-            # parse the fields to compare out of each 
+            # parse the fields to compare out of each
             dims_1 = getattr(device, 'dimensions', None)
             dims_2 = getattr(other, 'dimensions', None)
             if not (dims_1 and dims_2):
@@ -159,16 +159,16 @@ def updateDependencies():
 
     # devices = Device.objects.all()
     # # for each device, look at the relationship with every other device
-    # for device in devices: 
-    #     for other in devices: 
+    # for device in devices:
+    #     for other in devices:
     #         # look in the rules graph for the right rule
     #         rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
             # device_relationship = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
     #         if(len(rules) != 1):
     #             print "Invalid Rule Graph"
-    #         # get the rule out 
+    #         # get the rule out
     #         rule = rules[0]
-    #         # parse the fields to compare out of each 
+    #         # parse the fields to compare out of each
     #         params_1 = json.loads((getattr(device, 'dimensions')))[rule.field_1]
     #         params_2 = json.loads((getattr(other, 'dimensions')))[rule.field_2]
 
@@ -252,7 +252,7 @@ def createDependency(type_1, type_2, field_1, field_2, comparator):
 
     dependency = TypeDependency(device_type_1=type_1, device_type_2=type_2, field_1=field_1, field_2=field_2, comparator=comparator)
     dependency.save()
-    
+
     return dependency
 
 
