@@ -9,20 +9,37 @@ import json
 
 # Create your models here.
 
+class DeviceType(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    fields = models.CharField(max_length=1000) # JSON LIST of STRINGS
+    def __str__(self):
+        return self.name
+
+class TypeDependency(models.Model):
+    # DeviceType 1 [foreign key], DeviceType 2 [foreign key], field1[str], field2[str], comparator[str]
+    device_type_1 = models.ForeignKey(DeviceType, related_name='device_type_1_typedependency')
+    device_type_2 = models.ForeignKey(DeviceType, related_name='device_type_2_typedependency')
+    field_1 = models.CharField(max_length=200)
+    field_2 = models.CharField(max_length=200)
+    comparator = models.CharField(max_length=2)
+
+
+
+
 class Device(models.Model):
     manufacturer = models.CharField(max_length=500)
     brand_name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
     # product_type = models.CharField(max_length=200)
 
-    notes = models.TextField()
-    useful_links = models.CharField() # JSON
+    notes = models.TextField(null=True)
+    useful_links = models.CharField(max_length=2000, null=True) # JSON
     product_type = models.ForeignKey(DeviceType)
 
     dimensions = JSONField()
 
     def __str__(self):
-        return '{1} - {0}, {3} \n {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
+        return '{1} - {0}, {3} {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
 
 
 class Surgery(models.Model):
@@ -49,133 +66,149 @@ def add_device_to_surgery(device):
 
 class DeviceDependency(models.Model): 
     # device 1, device 2
-    device_1 = models.ForeignKey(Device)
-    device_2 = models.ForeignKey(Device)
+    device_1 = models.ForeignKey(Device, related_name='device1_device')
+    device_2 = models.ForeignKey(Device, related_name='device2_device')
     edgeType = models.IntegerField()
 
     def __str__(self): 
         return '{0} to {1} has dependecy {2}'.format(self.device_1, self.device_2, self.edgeType)
 
+
 def createDependencies():
     devices = Device.objects.all()
     # for each device, look at the relationship with every other device
     for device in devices: 
-        for other in devices: 
+        for other in devices:
             # look in the rules graph for the right rule
-            rules = TypeDependency.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
-            if(len(rules) != 1):
+            rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
+            if len(rules) < 1:
+                dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
+                dependence.save()
                 print "Invalid Rule Graph"
+                continue
             # get the rule out 
             rule = rules[0]
             # parse the fields to compare out of each 
-            params_1 = json.loads((getattr(device, 'dimensions')))[rule.field_1]
-            params_2 = json.loads((getattr(other, 'dimensions')))[rule.field_2]
+            dims_1 = getattr(device, 'dimensions', None)
+            dims_2 = getattr(other, 'dimensions', None)
+            if not (dims_1 and dims_2):
+                print 'invalid: no dimensions for either'
+            params_1 = json.loads(dims_1)[rule.field_1]
+            params_2 = json.loads(dims_2)[rule.field_2]
             edge = 0
-            if(rule.comparator == '<'):
-                if(params_1 < params_2):
+            if rule.comparator == '<':
+                if params_1 < params_2:
                     edge = 1
-                else:
-                    edge = 0
-
-            if(rule.comparator == '>'):
-                if(params_1 > params_2):
+            if rule.comparator == '>':
+                if params_1 > params_2:
                     edge = 1
-                else:
-                    edge = 0
-
-            if(rule.comparator == '='):
-                if(params_1 == params_2):
+            if rule.comparator == '=':
+                if params_1 == params_2:
                     edge = 1
-                else:
-                    edge = 0
-
-            if(rule.comparator == '<='):
-                if(params_1 <= params_2):
+            if rule.comparator == '<=':
+                if params_1 <= params_2:
                     edge = 1
-                else:
-                    edge = 0
-
-            if(rule.comparator == '>='):
-                if(params_1 >= params_2):
+            if rule.comparator == '>=':
+                if params_1 >= params_2:
                     edge = 1
-                else:
-                    edge = 0
             dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = edge)
             dependence.save()
-    return
 
 
 def updateDependencies():
+
     devices = Device.objects.all()
     # for each device, look at the relationship with every other device
     for device in devices: 
-        for other in devices: 
+        for other in devices:
             # look in the rules graph for the right rule
-            rules = TypeDependency.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
-            device_relationship = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
-            if(len(rules) != 1):
+            rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
+            if len(rules) < 1:
+                # dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
+
                 print "Invalid Rule Graph"
-            # get the rule out 
+                continue
+            dependence = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
+            # get the rule out
             rule = rules[0]
             # parse the fields to compare out of each 
-            params_1 = json.loads((getattr(device, 'dimensions')))[rule.field_1]
-            params_2 = json.loads((getattr(other, 'dimensions')))[rule.field_2]
+            dims_1 = getattr(device, 'dimensions', None)
+            dims_2 = getattr(other, 'dimensions', None)
+            if not (dims_1 and dims_2):
+                print 'invalid: no dimensions for either'
+            params_1 = json.loads(dims_1)[rule.field_1]
+            params_2 = json.loads(dims_2)[rule.field_2]
+            edge = 0
+            if rule.comparator == '<':
+                if params_1 < params_2:
+                    edge = 1
+            if rule.comparator == '>':
+                if params_1 > params_2:
+                    edge = 1
+            if rule.comparator == '=':
+                if params_1 == params_2:
+                    edge = 1
+            if rule.comparator == '<=':
+                if params_1 <= params_2:
+                    edge = 1
+            if rule.comparator == '>=':
+                if params_1 >= params_2:
+                    edge = 1
+            dependence.edgeType = edge
+            dependence.save()
 
-            if(rule.comparator == '<'):
-                if(params_1 < params_2):
-                    device_relationship.edgeType = 1
-                else:
-                    device_relationship.edgeType = 0
-                device_relationship.save()
+    # devices = Device.objects.all()
+    # # for each device, look at the relationship with every other device
+    # for device in devices: 
+    #     for other in devices: 
+    #         # look in the rules graph for the right rule
+    #         rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
+            # device_relationship = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
+    #         if(len(rules) != 1):
+    #             print "Invalid Rule Graph"
+    #         # get the rule out 
+    #         rule = rules[0]
+    #         # parse the fields to compare out of each 
+    #         params_1 = json.loads((getattr(device, 'dimensions')))[rule.field_1]
+    #         params_2 = json.loads((getattr(other, 'dimensions')))[rule.field_2]
 
-            if(rule.comparator == '>'):
-                if(params_1 > params_2):
-                    device_relationship.edgeType = 1
-                else:
-                    device_relationship.edgeType = 0
-                device_relationship.save()
+    #         if(rule.comparator == '<'):
+    #             if(params_1 < params_2):
+    #                 device_relationship.edgeType = 1
+    #             else:
+    #                 device_relationship.edgeType = 0
+    #             device_relationship.save()
 
-            if(rule.comparator == '='):
-                if(params_1 == params_2):
-                    device_relationship.edgeType = 1
-                else:
-                    device_relationship.edgeType = 0
-                device_relationship.save()
+    #         if(rule.comparator == '>'):
+    #             if(params_1 > params_2):
+    #                 device_relationship.edgeType = 1
+    #             else:
+    #                 device_relationship.edgeType = 0
+    #             device_relationship.save()
 
-            if(rule.comparator == '<='):
-                if(params_1 <= params_2):
-                    device_relationship.edgeType = 1
-                else:
-                    device_relationship.edgeType = 0
-                device_relationship.save()
+    #         if(rule.comparator == '='):
+    #             if(params_1 == params_2):
+    #                 device_relationship.edgeType = 1
+    #             else:
+    #                 device_relationship.edgeType = 0
+    #             device_relationship.save()
 
-            if(rule.comparator == '>='):
-                if(params_1 >= params_2):
-                    device_relationship.edgeType = 1
-                else:
-                    device_relationship.edgeType = 0
-                device_relationship.save()
-    return
+    #         if(rule.comparator == '<='):
+    #             if(params_1 <= params_2):
+    #                 device_relationship.edgeType = 1
+    #             else:
+    #                 device_relationship.edgeType = 0
+    #             device_relationship.save()
 
-
-
+    #         if(rule.comparator == '>='):
+    #             if(params_1 >= params_2):
+    #                 device_relationship.edgeType = 1
+    #             else:
+    #                 device_relationship.edgeType = 0
+    #             device_relationship.save()
 
 
 #### GRAPH DATABASE ####
-
-class DeviceType(models.Model):
-    name = models.CharField(max_length=200, unique=True)
-    fields = models.CharField() # JSON LIST of STRINGS
-    def __str__(self):
-        return name
-
-class TypeDependency(models.Model):
-    # DeviceType 1 [foreign key], DeviceType 2 [foreign key], field1[str], field2[str], comparator[str]
-    device_type_1 = models.ForeignKey(DeviceType)
-    device_type_2 = models.ForeignKey(DeviceType)
-    field_1 = models.CharField(max_length=200)
-    field_2 = models.CharField(max_length=200)
-    comparator = models.CharField(max_length=2)
 
 
 
@@ -191,7 +224,15 @@ def createDummyDependency():
     catheter.save()
     # new dependency between wire and catheter
     dependency = TypeDependency(device_type_1=wire, device_type_2=catheter, field_1='thickness', field_2='min_inner_diameter', comparator='>')
+    dependency.save()
 
+
+def create_dummy_devices():
+    wire = DeviceType.objects.filter(name='Wire')[0]
+    wire1 = Device(manufacturer='man', brand_name='wire_brand', description='dummy wire', product_type=wire, dimensions='{"thickness": 10}')
+    catheter = DeviceType.objects.filter(name='Catheter')[0]
+    catheter2 = Device(manufacturer='cath', brand_name='cath_brand', description='dummy catheter', product_type=catheter, dimensions='{"min_inner_diameter": 15}')
+    return (wire1, catheter2)
 
 def createDependency(type_1, type_2, field_1, field_2, comparator):
     for arg in [field_1, field_2, comparator]:
