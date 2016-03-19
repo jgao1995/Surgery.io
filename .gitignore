@@ -2,6 +2,7 @@
 *.swp
 *.un
 *.pyc
+*.sqlite3
 ENV/
 *.sqlite3
 log.txt
