@@ -232,6 +232,8 @@ def create_dummy_devices():
     wire1 = Device(manufacturer='man', brand_name='wire_brand', description='dummy wire', product_type=wire, dimensions='{"thickness": 10}')
     catheter = DeviceType.objects.filter(name='Catheter')[0]
     catheter2 = Device(manufacturer='cath', brand_name='cath_brand', description='dummy catheter', product_type=catheter, dimensions='{"min_inner_diameter": 15}')
+    wire1.save()
+    catheter2.save()
     return (wire1, catheter2)
 
 def createDependency(type_1, type_2, field_1, field_2, comparator):
@@ -256,6 +258,11 @@ def createDependency(type_1, type_2, field_1, field_2, comparator):
     return dependency
 
 
+
+def seed_db():
+    # seeds the db
+    createDummyDependency()
+    wire1, catheter2 = create_dummy_devices()
 
 
 
