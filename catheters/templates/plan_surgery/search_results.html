@@ -19,7 +19,7 @@
           </a>
         </div>
         <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-        <a class="navbar-brand" href="/all">View Catheters</a>
+        <a class="navbar-brand" href="/all">All Devices</a>
         <a class="navbar-brand" href="/admin">Add Devices</a>
       </div>
     </nav>
@@ -39,27 +39,11 @@
               </li>
               <li class="list-group-item">Helpful videos:<br>
                   {% for link in device.5 %}
-                    <!-- Link: {{ link }}<br> -->
-                      <!-- <p><a class="one" href="{{ link }}" target="iframe_a"></a></p>
-                      <iframe name="iframe_a" id="iframe_a"></iframe> -->
                       <iframe width="500" height="400" src="{{ link }}"></iframe>
                   {% endfor %}
               </li>
+              <li class="list-group-item"> <a href="/device/{{ device.6 }}/"> View specifics </a> </li>
           {% endfor %}
       {% endfor %}
-    </ul>
-
-    {% if results.items|length > 0 %}
-      <div class="form-group">
-      Notes
-      </div>
-    {% endif %}
-
   </div>
-
-
-  <div class = "container">
-
-  </div>
-
 </html>

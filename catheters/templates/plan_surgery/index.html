@@ -120,15 +120,30 @@
         </a>
       </div>
       <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-      <a class="navbar-brand" href="/all">View Catheters</a>
+      <a class="navbar-brand" href="/all">All Devices</a>
       <a class="navbar-brand" href="/admin">Add Devices</a>
     </div>
   </nav>
 
-  <div class = "container">
+  <style type="text/css"> 
+    #center_div {
+      position:fixed;
+      top: 50%;
+      left: 50%;
+      width:100em;
+      height:18em;
+      margin-top: -15em; /*set to a negative number 1/2 of your height*/
+      margin-left: -23em; /*set to a negative number 1/2 of your width*/
+    }
+  </style>
+
+  <div id="center_div" class = "container">
     <div class="row">
       <div class="col-lg-6">
         <div class="input-group">
+          <h1> Plan Surgery </h1>
+          <h4> Welcome to the Plan Surgery page! Here, you can search for devices and see a visualization of compatible devices, and you will also be able to assemble a list of the tools you plan to use. </h4>
+          <h5> To get started, search for any device and we will try to find it in our records. If we can't find it, you can add more devices <a href=""> here! </a> </h5>
           <form action="/plan_surgery/search" method="get">
             <input type="text" id="srch-term" name="query" class="form-control" placeholder="Search for..." onKeyUp="updateSugg()"/>
             <div id="results">

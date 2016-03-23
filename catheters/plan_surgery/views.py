@@ -30,7 +30,7 @@ def search(request):
         if device.useful_links:
             links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
         # code.interact(local=locals())
-        results[device.product_type].append((device.manufacturer, device.brand_name, device.description, dims, device.notes, links))
+        results[device.product_type].append((device.manufacturer, device.brand_name, device.description, dims, device.notes, links, device.id))
         print links
     context = {'results': dict(results)}
     return render(request, 'plan_surgery/search_results.html', context)
@@ -65,8 +65,7 @@ def plan_surgery(request):
 
 def all(request):
     devices = Device.objects.all()
-    device_strings = [str(d) for d in devices]
-    context = {"devices" : device_strings}
+    context = {"devices" : devices}
     return render(request, 'plan_surgery/all.html', context)
 
 def show(request, id):

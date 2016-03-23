@@ -22,18 +22,20 @@
         </a>
       </div>
       <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-      <a class="navbar-brand" href="/all">View Catheters</a>
+      <a class="navbar-brand" href="/all">All Devices</a>
       <a class="navbar-brand" href="/admin">Add Devices</a>
     </div>
   </nav>
 
-  <h2> All Devices </h2>
-	<div class="container">
-	 <ul class="list-group">
-	  {% for d in devices %}
-	  	<li class="list-group-item">{{ d }}</li>
-	  {% endfor %}
-	 </ul>
+  <div class="container">
+    <h2> All Devices </h2>
+    <ul class="list-group">
+      {% for d in devices %}
+        <li class="list-group-item">
+        <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
+        </li>
+	    {% endfor %}
+	  </ul>
 	</div>
 </body>
 
