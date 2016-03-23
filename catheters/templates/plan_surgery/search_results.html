@@ -27,7 +27,7 @@
     <div class="container">
       <ul class="list-group">
       {% for product_type, devices in results.items %}
-          <b>{{product_type}}</b>
+          <b>{{product_type}}s</b>
           {% for device in devices %}
               <li class="list-group-item">Manufacturer: {{ device.0 }}</li>
               <li class="list-group-item">Brand Name: {{ device.1 }}</li>

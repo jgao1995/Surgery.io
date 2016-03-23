@@ -30,8 +30,8 @@ class Device(models.Model):
     description = models.CharField(max_length=200)
     # product_type = models.CharField(max_length=200)
 
-    notes = models.TextField(null=True)
-    useful_links = models.CharField(max_length=2000, null=True) # JSON
+    notes = models.TextField(blank=True, null=True)
+    useful_links = models.CharField(max_length=2000, blank=True, null=True) # JSON
     product_type = models.ForeignKey(DeviceType)
 
     dimensions = JSONField()
@@ -177,9 +177,9 @@ def createDummyDependency():
 
 def create_dummy_devices():
     wire = DeviceType.objects.filter(name='Wire')[0]
-    wire1 = Device(manufacturer='man', brand_name='wire_brand', description='dummy wire', product_type=wire, dimensions='{"thickness": 10}')
+    wire1 = Device(manufacturer='Mirage', brand_name='Mirage', description='Mirage wire', product_type=wire, dimensions='{"thickness": 0.008, "length": 200}')
     catheter = DeviceType.objects.filter(name='Catheter')[0]
-    catheter2 = Device(manufacturer='cath', brand_name='cath_brand', description='dummy catheter', product_type=catheter, dimensions='{"min_inner_diameter": 15}')
+    catheter2 = Device(manufacturer='ENVOY', brand_name='6F', description='Envoy catheter', product_type=catheter, dimensions='{"min_inner_diameter": 0.070, "max_outer_diameter": 0.078, "length":90100, "dead_space": 2.23}')
     wire1.save()
     catheter2.save()
     return (wire1, catheter2)
@@ -206,17 +206,11 @@ def createDependency(type_1, type_2, field_1, field_2, comparator):
     return dependency
 
 
-
 def seed_db():
     # seeds the db
     createDummyDependency()
     wire1, catheter2 = create_dummy_devices()
-
-
-
-
-
-
+    createDependencies()
 
 
 

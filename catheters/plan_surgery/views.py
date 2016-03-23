@@ -45,7 +45,7 @@ def dynamic_search(request):
             dims = json.loads(device.dimensions)
         else:
             dims = device.dimensions[0]
-        results['name'].append((device.product_type, device.manufacturer, device.brand_name, device.description, dims))
+        results['name'].append((str(device.product_type), device.manufacturer, device.brand_name, device.description, dims, device.id))
     context = {'results': dict(results)}
     return JsonResponse({'results': dict(results)})
 
@@ -86,7 +86,8 @@ def add_video(request, id):
     link = request.GET['url']
     link = urllib.unquote(link)
     link = link.encode('ascii', 'ignore')
-    links.append(link)
+    if link not in links:
+        links.append(link)
     device.useful_links = json.dumps(links)
     device.save()
     return show(request, id)
@@ -98,7 +99,7 @@ def add_comment(request, id):
     if (current is None):
         current = ''
     current = current.encode('ascii', 'ignore')
-    current = current + notes + '\n'
+    current = current + ' ' + notes + '\n'
     device.notes = current
     device.save()
     return show(request, id)

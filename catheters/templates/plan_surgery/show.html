@@ -30,10 +30,10 @@
   <div class="container">
     <h1> Device Specifics </h1>
     <ul class="list-group">
-      <li class="list-group-item"> Device manufacturer: {{ manufacturer }} </li>
-      <li class="list-group-item"> Brand: {{ brand_name }} </li>
-      <li class="list-group-item"> Description: {{description}} </li>
-      <li class="list-group-item"> Product Type: {{product_type}} </li>
+      <li class="list-group-item"> <b>Device manufacturer</b>: {{ manufacturer }} </li>
+      <li class="list-group-item"> <b>Brand</b>: {{ brand_name }} </li>
+      <li class="list-group-item"> <b>Description</b>: {{description}} </li>
+      <li class="list-group-item"> <b>Product Type</b>: {{product_type}} </li>
       <li class="list-group-item">
         {% for link in useful_links %}
           <iframe width="500" height="400" src="{{ link }}"> </iframe>
@@ -45,12 +45,13 @@
       </form>
       </li>
       <li class="list-group-item">
+        <b>Notes</b><br>
         {% if notes %}
-          {{ notes }}
+
+          {{ notes |linebreaks}}
         {% endif %}
         <br>
         <div class="form-group">
-          Notes
           <form action="/device/{{ id }}/add_comment" method="get">
             <textarea class="form-control" name="comment" id="comment"></textarea>
             <input type="submit" value="Add notes">
