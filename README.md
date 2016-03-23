@@ -30,5 +30,6 @@ You should be set at this point!
 - graph visualization/logic for seeing if devices fit within one another
 - GUI for visualizing if two devices are compatible
 - information on the device specifics page could be more specific. (I did not add dimensions). 
+- dynamic search is broken for some reason :( 
 
 
