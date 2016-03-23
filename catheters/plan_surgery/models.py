@@ -39,7 +39,7 @@ class Device(models.Model):
     dimensions = JSONField()
 
     def __str__(self):
-        return '{1} - {0}, {3} {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
+        return '<Device> {1} | {0} | {3} | {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
 
 
 class Surgery(models.Model):
@@ -71,7 +71,7 @@ class DeviceDependency(models.Model):
     edgeType = models.IntegerField()
 
     def __str__(self):
-        return '{0} to {1} has dependecy {2}'.format(self.device_1, self.device_2, self.edgeType)
+        return '{0} to {1} has dependency {2}'.format(self.device_1, self.device_2, self.edgeType)
 
 
 def createDependencies():
@@ -156,56 +156,6 @@ def updateDependencies():
                     edge = 1
             dependence.edgeType = edge
             dependence.save()
-
-    # devices = Device.objects.all()
-    # # for each device, look at the relationship with every other device
-    # for device in devices:
-    #     for other in devices:
-    #         # look in the rules graph for the right rule
-    #         rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
-            # device_relationship = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
-    #         if(len(rules) != 1):
-    #             print "Invalid Rule Graph"
-    #         # get the rule out
-    #         rule = rules[0]
-    #         # parse the fields to compare out of each
-    #         params_1 = json.loads((getattr(device, 'dimensions')))[rule.field_1]
-    #         params_2 = json.loads((getattr(other, 'dimensions')))[rule.field_2]
-
-    #         if(rule.comparator == '<'):
-    #             if(params_1 < params_2):
-    #                 device_relationship.edgeType = 1
-    #             else:
-    #                 device_relationship.edgeType = 0
-    #             device_relationship.save()
-
-    #         if(rule.comparator == '>'):
-    #             if(params_1 > params_2):
-    #                 device_relationship.edgeType = 1
-    #             else:
-    #                 device_relationship.edgeType = 0
-    #             device_relationship.save()
-
-    #         if(rule.comparator == '='):
-    #             if(params_1 == params_2):
-    #                 device_relationship.edgeType = 1
-    #             else:
-    #                 device_relationship.edgeType = 0
-    #             device_relationship.save()
-
-    #         if(rule.comparator == '<='):
-    #             if(params_1 <= params_2):
-    #                 device_relationship.edgeType = 1
-    #             else:
-    #                 device_relationship.edgeType = 0
-    #             device_relationship.save()
-
-    #         if(rule.comparator == '>='):
-    #             if(params_1 >= params_2):
-    #                 device_relationship.edgeType = 1
-    #             else:
-    #                 device_relationship.edgeType = 0
-    #             device_relationship.save()
 
 
 #### GRAPH DATABASE ####
