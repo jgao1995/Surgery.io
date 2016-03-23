@@ -27,30 +27,38 @@
     </div>
   </nav>
 
-  <h2> Device Show </h2>
-  Device manufacturer: {{ manufacturer }} <br>
-  Brand: {{ brand_name }} <br>
-  Description: {{description}} <br>
-  Product Type: {{product_type}} <br>
-
-  {% for key, value in device.4.items %}
-    <p><a class="one" href="{{ value }}" target="iframe_a"></a></p>
-    <iframe name="iframe_a" id="iframe_a"></iframe>
-  {% endfor %}
-
-  <form action="/device/{{ id }}/add_video" method="get">
-    <input type="text" name="url">
-    <input type="submit" value="Add video">
-  </form>
-
-  <div class="form-group">
-    <label for="comment">Comment:</label>
-    <form action="/device/{{ id }}/add_comment" method="get">
-      <textarea class="form-control" rows="3" id="comment"></textarea>
-      <input type="submit" value="Add notes">
-    </form>
+  <div class="container">
+    <h1> Device Show </h1>
+    <ul class="list-group">
+      <li class="list-group-item"> Device manufacturer: {{ manufacturer }} </li>
+      <li class="list-group-item"> Brand: {{ brand_name }} </li>
+      <li class="list-group-item"> Description: {{description}} </li>
+      <li class="list-group-item"> Product Type: {{product_type}} </li>
+      <li class="list-group-item">
+        {% for link in useful_links %}
+          <iframe width="500" height="400" src="{{ link }}"> </iframe>
+          <br>
+        {% endfor %}
+      <form action="/device/{{ id }}/add_video" method="get">
+        <input type="text" name="url"> <br>
+        <input type="submit" value="Add video">
+      </form>
+      </li>
+      <li class="list-group-item">
+        {% if notes %}
+          {{ notes }}
+        {% endif %}
+        <br>
+        <div class="form-group">
+          Notes
+          <form action="/device/{{ id }}/add_comment" method="get">
+            <textarea class="form-control" name="comment" id="comment"></textarea>
+            <input type="submit" value="Add notes">
+          </form>
+        </div>
+      </li>
+    </ul>
   </div>
-
 </body>
 
 </html>

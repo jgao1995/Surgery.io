@@ -24,8 +24,6 @@ class TypeDependency(models.Model):
     comparator = models.CharField(max_length=2)
 
 
-
-
 class Device(models.Model):
     manufacturer = models.CharField(max_length=500)
     brand_name = models.CharField(max_length=200)
