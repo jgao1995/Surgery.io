@@ -2,3 +2,17 @@ Django==1.9.2
 jsonfield==1.0.3
 django-bootstrap3
 django-extensions
+appnope==0.1.0
+decorator==4.0.9
+django-admin-bootstrapped==2.5.7
+gnureadline==6.3.3
+ipython==4.1.2
+ipython-genutils==0.1.0
+jsonfield==1.0.3
+path.py==8.1.2
+pexpect==4.0.1
+pickleshare==0.6
+ptyprocess==0.5.1
+simplegeneric==0.8.1
+six==1.10.0
+traitlets==4.2.1
