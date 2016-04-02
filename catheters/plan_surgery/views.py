@@ -2,7 +2,6 @@ from django.shortcuts import render_to_response, render
 from django.http import HttpResponse, JsonResponse
 from django import forms
 from plan_surgery.models import Device, Surgery
-from IPython import embed
 from collections import defaultdict
 import json
 import code
