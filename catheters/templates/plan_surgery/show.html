@@ -29,12 +29,13 @@
 
   <div class="container">
     <h1> Device Specifics </h1>
+    <b>{{ message }}</b>
     <ul class="list-group">
       <li class="list-group-item"> <b>Device manufacturer</b>: {{ manufacturer }} </li>
       <li class="list-group-item"> <b>Brand</b>: {{ brand_name }} </li>
       <li class="list-group-item"> <b>Description</b>: {{description}} </li>
       <li class="list-group-item"> <b>Product Type</b>: {{product_type}} </li>
-      <li class="list-group-item">
+      <li class="list-group-item"> <b>Videos</b>:<br>
         {% for link in useful_links %}
           <iframe width="500" height="400" src="{{ link }}"> </iframe>
           <br>

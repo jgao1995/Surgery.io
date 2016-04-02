@@ -3,9 +3,13 @@ from django.http import HttpResponse, JsonResponse
 from django import forms
 from plan_surgery.models import Device, Surgery
 from collections import defaultdict
+
+import re
 import json
 import code
 import urllib
+import requests
+from IPython import embed
 
 class NameForm(forms.Form):
     your_name = forms.CharField(label='Enter catheter name ', max_length=100)
@@ -67,12 +71,12 @@ def all(request):
     context = {"devices" : devices}
     return render(request, 'plan_surgery/all.html', context)
 
-def show(request, id):
+def show(request, id, message=""):
     device = Device.objects.get(pk=id)
     links = None
     if device.useful_links:
         links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
-    context = {"manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links}
+    context = {"manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
     return render(request, 'plan_surgery/show.html', context)
 
 def add_video(request, id):
@@ -85,11 +89,22 @@ def add_video(request, id):
     link = request.GET['url']
     link = urllib.unquote(link)
     link = link.encode('ascii', 'ignore')
-    if link not in links:
-        links.append(link)
-    device.useful_links = json.dumps(links)
-    device.save()
-    return show(request, id)
+    # verify that link works.
+    p = re.compile('https?://(www.)?youtube.com/watch\?v=(.*)')
+    m = p.match(link)
+    # embed()
+    if m:
+        video_id = m.group(2)
+        img_url = 'http://img.youtube.com/vi/{}/0.jpg'.format(video_id)
+        r = requests.get(img_url)
+        if r.status_code == 200:
+            if link not in links:
+                links.append(link)
+            device.useful_links = json.dumps(links)
+            device.save()
+            return show(request, id, "Added video successfully.")
+    return show(request, id, "Failed to add video. Please use a valid YouTube URL.")
+
 
 def add_comment(request, id):
     device = Device.objects.get(pk=id)
