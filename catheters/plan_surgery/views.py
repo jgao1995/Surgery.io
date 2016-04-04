@@ -20,6 +20,15 @@ class NameForm(forms.Form):
 #     context = { "form" : NameForm() }
 #     return render(request, 'plan_surgery/index.html', context)
 
+def compatibleCatheters(catheter):
+    adjacency_list = DeviceDependency.filter(device_1=catheter)
+    compatible = []
+    for device in adjacency_list:
+        if(DeviceDependency.get(device_1=catheter, device_2=device) == 1):
+            compatible.push(device.name + ':' + device.fields)
+    return compatible
+
+
 def search(request):
     query = request.GET['query']
     query_set = Device.objects.filter(manufacturer__contains=query) | Device.objects.filter(brand_name__contains=query) | Device.objects.filter(description__contains=query)
@@ -67,16 +76,17 @@ def plan_surgery(request):
     return render(request, 'plan_surgery/index.html', context)
 
 def all(request):
-    devices = Device.objects.all()
+    devices = Device.objects.all()      
     context = {"devices" : devices}
     return render(request, 'plan_surgery/all.html', context)
 
 def show(request, id, message=""):
     device = Device.objects.get(pk=id)
+    compatible = compatibleCatheters(device)
     links = None
     if device.useful_links:
         links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
-    context = {"manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
+    context = {"compatible_devices  ": compatible, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
     return render(request, 'plan_surgery/show.html', context)
 
 def add_video(request, id):

@@ -44,7 +44,7 @@
         <input type="text" name="url"> <br>
         <input type="submit" value="Add video">
       </form>
-      </li>
+      </li>   
       <li class="list-group-item">
         <b>Notes</b><br>
         {% if notes %}
@@ -59,6 +59,12 @@
           </form>
         </div>
       </li>
+      <li class="list-group-item"> <b>Videos</b>:<br>
+        {% for device in compatible devices %}
+          <iframe width="500" height="400" src="{{ device }}"> </iframe>
+          <br>
+        {% endfor %}
+      </li>  
     </ul>
   </div>
 </body>

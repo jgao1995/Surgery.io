@@ -9,6 +9,7 @@ import json
 
 # Create your models here.
 
+
 class DeviceType(models.Model):
     name = models.CharField(max_length=200, unique=True)
     fields = models.CharField(max_length=1000) # JSON LIST of STRINGS
@@ -35,7 +36,7 @@ class Device(models.Model):
     product_type = models.ForeignKey(DeviceType)
 
     dimensions = JSONField()
-
+    remaining_dimensions = JSONField()
     def __str__(self):
         return '<Device> {1} | {0} | {3} | {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
 
@@ -48,7 +49,8 @@ def add_device_to_database(manufacturer, brand_name, description, product_type, 
     ''' take in all that stuff ^
     return true/false if it works out'''
     dimensions = dims or {}
-    device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=json.dumps(dimensions))
+    # unit conversion??
+    device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=json.dumps(dimensions), remaining_dimensions=json.dumps(dimensions))
 
     device.save()
 
@@ -57,10 +59,15 @@ def create_surgery():
     surgery.save()
     return surgery
 
-def add_device_to_surgery(device):
+def add_device_to_surgery(device_in, device_into):
     # Assume device has been saved.
-    surgery.devices.add(device)
-    return device
+    # Check the dependency
+    if(DeviceDependency.get(device_1=device_into, device_2=device_in) == 1):
+        surgery.devices.add(device_in)
+        return device
+    return null
+
+ 
 
 class DeviceDependency(models.Model):
     # device 1, device 2
@@ -70,6 +77,9 @@ class DeviceDependency(models.Model):
 
     def __str__(self):
         return '{0} to {1} has dependency {2}'.format(self.device_1, self.device_2, self.edgeType)
+
+def update(device_into, device_in):
+    # TO DO
 
 
 def createDependencies():
@@ -87,8 +97,8 @@ def createDependencies():
             # get the rule out
             rule = rules[0]
             # parse the fields to compare out of each
-            dims_1 = getattr(device, 'dimensions', None)
-            dims_2 = getattr(other, 'dimensions', None)
+            dims_1 = getattr(device, 'remaining_dimensions', None)
+            dims_2 = getattr(other, 'remaining_dimensions', None)
             if not (dims_1 and dims_2):
                 print 'invalid: no dimensions for either'
             params_1 = json.loads(dims_1)[rule.field_1]
@@ -130,8 +140,8 @@ def updateDependencies():
             # get the rule out
             rule = rules[0]
             # parse the fields to compare out of each
-            dims_1 = getattr(device, 'dimensions', None)
-            dims_2 = getattr(other, 'dimensions', None)
+            dims_1 = getattr(device, 'remaining_dimensions', None)
+            dims_2 = getattr(other, 'remaining_dimensions', None)
             if not (dims_1 and dims_2):
                 print 'invalid: no dimensions for either'
             params_1 = json.loads(dims_1)[rule.field_1]
