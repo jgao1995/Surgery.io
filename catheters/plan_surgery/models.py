@@ -80,7 +80,7 @@ class DeviceDependency(models.Model):
 
 def update(device_into, device_in):
     # TO DO
-
+    return
 
 def createDependencies():
     devices = Device.objects.all()
