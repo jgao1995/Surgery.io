@@ -7,17 +7,34 @@ from jsonfield import JSONField
 
 import json
 
-# Create your models here.
-
-
 class DeviceType(models.Model):
+    '''
+    model for specific type of device; e.g. Catheter, Wire
+    name: name of Model e.g. "Catheter"
+    fields: JSON list of strings e.g. "['min_inner_diameter']"
+    '''
     name = models.CharField(max_length=200, unique=True)
     fields = models.CharField(max_length=1000) # JSON LIST of STRINGS
     def __str__(self):
         return self.name
 
 class TypeDependency(models.Model):
-    # DeviceType 1 [foreign key], DeviceType 2 [foreign key], field1[str], field2[str], comparator[str]
+    '''
+    model to specify a relationship between DeviceTypes.
+
+    DeviceType 1: foreign key (DeviceType)
+    DeviceType 2: foreign key (DeviceType)
+    field_1: str
+    field_2: str
+    comparator: str
+
+    For example, catheter.min_inner_diameter > wire.max_outer_diameter:
+        device_type_1 = Catheter
+        device_type_2 = Wire
+        field_1 = "min_inner_diameter"
+        field_2 = "max_outer_diameter"
+        comparator = ">"
+    '''
     device_type_1 = models.ForeignKey(DeviceType, related_name='device_type_1_typedependency')
     device_type_2 = models.ForeignKey(DeviceType, related_name='device_type_2_typedependency')
     field_1 = models.CharField(max_length=200)
@@ -26,10 +43,22 @@ class TypeDependency(models.Model):
 
 
 class Device(models.Model):
+    '''
+    model to specify a particular instance of a Device Type.
+
+    manufacturer: str
+    brand_name: str
+    description: str
+
+    notes: str
+    useful_links: str (JSON str of list)
+    product_type: DeviceType [foreign key]
+    dimensions: str (JSON str of object)
+    remaining_dimensions: str (JSON str of object)
+    '''
     manufacturer = models.CharField(max_length=500)
     brand_name = models.CharField(max_length=200)
     description = models.CharField(max_length=200)
-    # product_type = models.CharField(max_length=200)
 
     notes = models.TextField(blank=True, null=True)
     useful_links = models.CharField(max_length=2000, blank=True, null=True) # JSON
@@ -42,19 +71,35 @@ class Device(models.Model):
 
 
 class Surgery(models.Model):
+    '''
+    model to represent specific Surgery.
+    A surgery has many Devices, and a created_date.
+
+    May want to add creator
+    '''
     devices = models.ManyToManyField(Device)
     created_date = models.DateTimeField(default=timezone.now)
 
 def add_device_to_database(manufacturer, brand_name, description, product_type, dims=None):
-    ''' take in all that stuff ^
-    return true/false if it works out'''
+    '''
+    manufacturer: str
+    brand_name: str
+    description: str
+    product_type: DeviceType
+    dims: str
+    return true/false if it works out or not.'''
     dimensions = dims or {}
     # unit conversion??
     device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=json.dumps(dimensions), remaining_dimensions=json.dumps(dimensions))
 
-    device.save()
+    return device.save()
 
 def create_surgery():
+    '''
+    creates a sample Surgery and saves it.
+
+    rtype: Surgery
+    '''
     surgery = Surgery()
     surgery.save()
     return surgery
@@ -62,7 +107,7 @@ def create_surgery():
 def add_device_to_surgery(device_in, device_into):
     # Assume device has been saved.
     # Check the dependency
-    if(DeviceDependency.get(device_1=device_into, device_2=device_in) == 1):
+    if DeviceDependency.get(device_1=device_into, device_2=device_in) == 1:
         surgery.devices.add(device_in)
         return device
     return null
@@ -70,7 +115,14 @@ def add_device_to_surgery(device_in, device_into):
  
 
 class DeviceDependency(models.Model):
-    # device 1, device 2
+    '''
+    model to represent dependency between two specific Devices (instances of DeviceType)
+    device_1: Device
+    device_2: Device
+    edgeType: int [0/1]
+        0: no relation between 2 devices
+        1: relation between 2 devices
+    '''
     device_1 = models.ForeignKey(Device, related_name='device1_device')
     device_2 = models.ForeignKey(Device, related_name='device2_device')
     edgeType = models.IntegerField()
