@@ -65,7 +65,7 @@ class Device(models.Model):
     product_type = models.ForeignKey(DeviceType)
 
     dimensions = JSONField()
-    remaining_dimensions = JSONField()
+    
     def __str__(self):
         return '<Device> {1} | {0} | {3} | {2}'.format(self.manufacturer, self.brand_name, self.description, self.product_type)
 
@@ -74,10 +74,11 @@ class Surgery(models.Model):
     '''
     model to represent specific Surgery.
     A surgery has many Devices, and a created_date.
-
+    remaining_dimensions is a dictionary key=[Device id] => val={dim name => remaining space of dimension of device}
     May want to add creator
     '''
     devices = models.ManyToManyField(Device)
+    remaining_dimensions = JSONField()
     created_date = models.DateTimeField(default=timezone.now)
 
 def add_device_to_database(manufacturer, brand_name, description, product_type, dims=None):
@@ -176,7 +177,9 @@ def createDependencies():
 
 
 def updateDependencies():
-
+    '''
+    Performs a mass update over all dependencies between devices, using the dependencies between DeviceTypes
+    '''
     devices = Device.objects.all()
     # for each device, look at the relationship with every other device
     for device in devices:
@@ -221,13 +224,20 @@ def updateDependencies():
 #### GRAPH DATABASE ####
 
 
-
 def create_device_type(name, fields):
+    '''
+    Creates new device type
+    name: str
+    fields: [str]
+    '''
     field_str = json.dumps(fields)
     device_type = DeviceType(name=name, fields=field_str)
     return device_type
 
-def createDummyDependency():
+def create_dummy_dependency():
+    '''
+    creates dummy dependency between Device Types: Wire, Catheter
+    '''
     wire = create_device_type('Wire', ['thickness', 'length'])
     catheter = create_device_type('Catheter', ['max_outer_diameter', 'min_inner_diameter', 'length'])
     wire.save()
@@ -238,6 +248,9 @@ def createDummyDependency():
 
 
 def create_dummy_devices():
+    '''
+    creates dummy devices: Wire, Catheter
+    '''
     wire = DeviceType.objects.filter(name='Wire')[0]
     wire1 = Device(manufacturer='Mirage', brand_name='Mirage', description='Mirage wire', product_type=wire, dimensions='{"thickness": 0.008, "length": 200}')
     catheter = DeviceType.objects.filter(name='Catheter')[0]
@@ -246,7 +259,15 @@ def create_dummy_devices():
     catheter2.save()
     return (wire1, catheter2)
 
-def createDependency(type_1, type_2, field_1, field_2, comparator):
+def create_dependency(type_1, type_2, field_1, field_2, comparator):
+    '''
+    Creates a dependency between type_1 and type_2
+    type_1: DeviceType
+    type_2: DeviceType
+    field_1: str
+    field_2: str
+    comparator: str
+    '''
     for arg in [field_1, field_2, comparator]:
         if not isinstance(arg, str):
             raise Exception('Argument is not a string: %s'%arg)
@@ -269,7 +290,7 @@ def createDependency(type_1, type_2, field_1, field_2, comparator):
 
 
 def seed_db():
-    # seeds the db
+    ''' seeds the db with sample data for testing purposes'''
     createDummyDependency()
     wire1, catheter2 = create_dummy_devices()
     createDependencies()
