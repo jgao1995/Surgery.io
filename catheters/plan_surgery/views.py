@@ -15,15 +15,19 @@ class NameForm(forms.Form):
     your_name = forms.CharField(label='Enter catheter name ', max_length=100)
 
 
-def compatibleCatheters(catheter):
+def compatibleDevices(catheter):
     '''
     Given a device, returns the compatible devices according to the rules defined in the Dependency database
     '''
-    adjacency_list = DeviceDependency.filter(device_1=catheter)
+    adjacency_list_1 = DeviceDependency.objects.filter(device_1=catheter)
+    adjacency_list_2 = DeviceDependency.objects.filter(device_2=catheter)
     compatible = []
-    for device in adjacency_list:
-        if(DeviceDependency.get(device_1=catheter, device_2=device) == 1):
-            compatible.push(device.name + ':' + device.fields)
+    for dependency in adjacency_list_1:
+        if dependency.edgeType == 1:
+            compatible.append(dependency.device_2)
+    for dependency in adjacency_list_2:
+        if dependency.edgeType == 1:
+            compatible.append(dependency.device_1)
     return compatible
 
 def search(request):
@@ -42,7 +46,6 @@ def search(request):
         links = None
         if device.useful_links:
             links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
-        # code.interact(local=locals())
         results[device.product_type].append((device.manufacturer, device.brand_name, device.description, dims, device.notes, links, device.id))
         print links
     context = {'results': dict(results)}
@@ -105,11 +108,22 @@ def show(request, id, message=""):
     Renders the show page for a given catheter ID
     '''
     device = Device.objects.get(pk=id)
-    compatible = compatibleCatheters(device)
+    compatible = compatibleDevices(device)
+    results = defaultdict(list)
+    for dev in compatible:
+        if isinstance(dev.dimensions, unicode):
+            dev_dims = json.loads(dev.dimensions)
+        else:
+            dev_dims = dev.dimensions[0]
+        results[dev.product_type].append((dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
     links = None
     if device.useful_links:
         links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
-    context = {"compatible_devices  ": compatible, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
+    if isinstance(device.dimensions, unicode):
+        dims = json.loads(device.dimensions)
+    else:
+        dims = device.dimensions[0]
+    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
     return render(request, 'plan_surgery/show.html', context)
     
 

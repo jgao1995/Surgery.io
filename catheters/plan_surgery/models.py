@@ -111,9 +111,7 @@ def add_device_to_surgery(device_in, device_into):
     if DeviceDependency.get(device_1=device_into, device_2=device_in) == 1:
         surgery.devices.add(device_in)
         return device
-    return null
-
- 
+    return None
 
 class DeviceDependency(models.Model):
     '''
@@ -143,17 +141,17 @@ def createDependencies():
             # look in the rules graph for the right rule
             rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
             if len(rules) < 1:
-                dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
-                dependence.save()
-                print "Invalid Rule Graph"
+                # dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
+                # dependence.save()
                 continue
             # get the rule out
             rule = rules[0]
             # parse the fields to compare out of each
-            dims_1 = getattr(device, 'remaining_dimensions', None)
-            dims_2 = getattr(other, 'remaining_dimensions', None)
+            dims_1 = getattr(device, 'dimensions', None)
+            dims_2 = getattr(other, 'dimensions', None)
             if not (dims_1 and dims_2):
                 print 'invalid: no dimensions for either'
+                continue
             params_1 = json.loads(dims_1)[rule.field_1]
             params_2 = json.loads(dims_2)[rule.field_2]
             edge = 0
@@ -172,8 +170,10 @@ def createDependencies():
             if rule.comparator == '>=':
                 if params_1 >= params_2:
                     edge = 1
-            dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = edge)
-            dependence.save()
+            if edge:
+                dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = edge)
+                dependence.save()
+                print 'Saved dependency between',device,'and',other
 
 
 def updateDependencies():
@@ -243,7 +243,7 @@ def create_dummy_dependency():
     wire.save()
     catheter.save()
     # new dependency between wire and catheter
-    dependency = TypeDependency(device_type_1=wire, device_type_2=catheter, field_1='thickness', field_2='min_inner_diameter', comparator='>')
+    dependency = TypeDependency(device_type_1=wire, device_type_2=catheter, field_1='thickness', field_2='min_inner_diameter', comparator='<')
     dependency.save()
 
 
@@ -261,7 +261,7 @@ def create_dummy_devices():
 
 def create_dependency(type_1, type_2, field_1, field_2, comparator):
     '''
-    Creates a dependency between type_1 and type_2
+    Creates a TypeDependency between type_1 and type_2
     type_1: DeviceType
     type_2: DeviceType
     field_1: str

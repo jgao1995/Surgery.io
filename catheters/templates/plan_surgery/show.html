@@ -35,6 +35,12 @@
       <li class="list-group-item"> <b>Brand</b>: {{ brand_name }} </li>
       <li class="list-group-item"> <b>Description</b>: {{description}} </li>
       <li class="list-group-item"> <b>Product Type</b>: {{product_type}} </li>
+      <li class="list-group-item">Dimensions:<br>
+          {% for key, value in dimensions.items %}
+              <i>{{ key }}</i>: {{value}}
+              <br>
+          {% endfor %}
+      </li>
       <li class="list-group-item"> <b>Videos</b>:<br>
         {% for link in useful_links %}
           <iframe width="500" height="400" src="{{ link }}"> </iframe>
@@ -48,7 +54,6 @@
       <li class="list-group-item">
         <b>Notes</b><br>
         {% if notes %}
-
           {{ notes |linebreaks}}
         {% endif %}
         <br>
@@ -59,12 +64,22 @@
           </form>
         </div>
       </li>
-      <li class="list-group-item"> <b>Videos</b>:<br>
-        {% for device in compatible devices %}
-          <iframe width="500" height="400" src="{{ device }}"> </iframe>
-          <br>
+      <li class="list-group-item"> <b>Compatible Devices</b>:<br>
+      {% for product_type, devices in compatible_devices.items %}
+        <b>{{product_type}}s</b>
+        <br>
+        {% for d in devices %}
+          <ol class="list-group-item">
+            <a href="/device/{{ d.4 }}/"> {{ d.1 }} {{ d.0 }} {{ d.2 }}</a>
+            <br>
+            {% for key, value in d.3.items %}
+              - <i>{{ key }}</i>: {{value}}
+              <br>
+            {% endfor %}
+            </li>
         {% endfor %}
-      </li>  
+      </li>
+      {% endfor %}
     </ul>
   </div>
 </body>
