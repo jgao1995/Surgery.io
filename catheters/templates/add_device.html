@@ -36,6 +36,7 @@
         </li>
       {% endfor %}
     </ul>
+  </div>
 
   <div class="container">
     <h2>Select Device Type</h2>
@@ -43,12 +44,8 @@
       {% for t in types %}
         <option> {{t}} </option>
       {% endfor %}
-  </div>
-
-  <div class="container">
-    <div class="jumbotron">
-      <a href="/add_device_2"><button type="button" class="btn">Next</button></a>
-    </div>
+    </select>
+    <a href="/add_device_2"><button type="button" class="btn">Next</button></a>
   </div>
 
 
