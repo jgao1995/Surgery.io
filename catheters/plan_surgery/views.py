@@ -138,11 +138,6 @@ def add_device(request):
     return redirect('all')
 
 
-def add_device(request):
-    device_type = request
-
-
-
 def show(request, id, message=""):
     '''
     Renders the show page for a given catheter ID
