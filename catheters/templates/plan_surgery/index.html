@@ -32,9 +32,6 @@
 
           var htmlOut = "<li>"+(json['results']['name'].length)+" result(s)"+"</li>";
           htmlOut += "<li><a href='/device/"+json['results']['name'][0][5]+"'>"+device+"</a></li>";
-          // for (var i=0; i < json['results'].length; i++) {
-          //   htmlOut += "<li><a href='/"+users[i].username+"/profile' >"+users[i].first_name+ " " + users[i].last_name+"</a></li>";
-          // }
           htmlOut = "<ul class='sub-menu'>"+htmlOut+"</ul>";
           $("#results").html(htmlOut);
         });
