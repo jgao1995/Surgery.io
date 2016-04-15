@@ -102,6 +102,13 @@ def all(request):
     context = {"devices" : devices}
     return render(request, 'plan_surgery/all.html', context)
     
+def show_add_device(request):
+    '''
+    Renders the add device
+    '''
+    return render(request, 'add_device.html')
+
+
 
 def show(request, id, message=""):
     '''

@@ -10,7 +10,7 @@
       {% bootstrap_javascript %}
       {# Display django.contrib.messages as Bootstrap alerts #}
       {% bootstrap_messages %}
-  	</head>
+    </head>
 
 <body>
 
@@ -28,16 +28,16 @@
   </nav>
 
   <div class="container">
-    <h2> All Devices </h2>
+    <h2>Add Device</h2>
     <ul class="list-group">
       {% for d in devices %}
         <li class="list-group-item">
         <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
         </li>
-	    {% endfor %}
-	  </ul>
-    <a href="/add_device"><button type="button" class="btn btn-warning">Add Device</button></a>
-	</div>
+      {% endfor %}
+    </ul>
+  </div>
+
 </body>
 
 </html>

@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     url(r'^all/$', views.all, name="all"),
+    url(r'^add_device/$', views.show_add_device, name="Add Device"),
     url(r'^$', views.index, name='Index'),
     url(r'/search', views.search, name='Search'),
     url(r'/dsearch', views.dynamic_search, name="JSON Results"),
