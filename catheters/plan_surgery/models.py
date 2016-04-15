@@ -78,7 +78,7 @@ class Surgery(models.Model):
     May want to add creator
     '''
     devices = models.ManyToManyField(Device)
-    remaining_dimensions = JSONField()
+    remaining_dimensions =  JSONField()
     created_date = models.DateTimeField(default=timezone.now)
 
 def add_device_to_database(manufacturer, brand_name, description, product_type, dims=None):
