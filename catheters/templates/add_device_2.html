@@ -30,25 +30,13 @@
   <div class="container">
     <h2>Add Device</h2>
     <ul class="list-group">
-      {% for d in devices %}
+      {% for field in fields %}
         <li class="list-group-item">
         <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
         </li>
       {% endfor %}
     </ul>
   </div>
-
-  <div class="container">
-    <h2>Select Device Type</h2>
-    <select id="cd-dropdown" class="cd-select">
-      {% for t in types %}
-        <option> {{t}} </option>
-      {% endfor %}
-    </select>
-    <a href="/add_device_2"><button type="button" class="btn">Next</button></a>
-  </div>
-
-
 
 </body>
 
