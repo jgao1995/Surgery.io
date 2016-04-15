@@ -72,7 +72,7 @@ def dynamic_search(request):
 
 from plan_surgery.models import *
 
-# CViews are here.
+# Views are here.
 
 
 def index(request):
@@ -102,11 +102,44 @@ def all(request):
     context = {"devices" : devices}
     return render(request, 'plan_surgery/all.html', context)
     
-def show_add_device(request):
+def show_add_device_1(request):
     '''
-    Renders the add device
+    Renders the add device page selecting devicetypes
     '''
-    return render(request, 'add_device.html')
+    device_types = [x.name for x in DeviceType.objects.all]
+    context = {'types': device_types}
+    return render(request, 'add_device.html', context)
+
+
+def show_add_device_2(request):
+    '''
+    Renders the add device page part 2
+    '''
+    device_type_name = request.GET['device_type']
+    device_type = DeviceType.objects.filter(name=device_type_name)
+    fields = json.loads(device_type.fields)
+    context = {'fields': fields}
+    return render(request, 'add_device_2.html', context)
+
+
+def add_device(request):
+    ''' receives post request for adding a device to the database'''
+    device_type_name = request.POST['device_type']
+    device_type = DeviceType.objects.filter(name=device_type_name)
+    field_values = request.POST.list('field_values')
+    fields = json.loads(device_type.fields)
+    manufacturer = request.POST['manufacturer']
+    brand_name = request.POST['brand_name']
+    description = request.POST['description']
+    dimensions = json.dumps(dict(zip(fields, field_values)))
+    device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=dimensions, product_type=device_type)
+    if not device.save():
+        return render(request, 'error.html')
+    return redirect('all')
+
+
+def add_device(request):
+    device_type = request
 
 
 
