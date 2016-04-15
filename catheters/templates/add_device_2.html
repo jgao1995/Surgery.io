@@ -27,16 +27,13 @@
     </div>
   </nav>
 
-  <div class="container">
-    <h2>Add Device</h2>
-    <ul class="list-group">
-      {% for field in fields %}
-        <li class="list-group-item">
-        <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
-        </li>
+   <form action="RAYMONDINSERTTHISYOU" method="get">
+      {% for f in fields %}
+        <input type="text" name="{{f}}"> <br>
       {% endfor %}
-    </ul>
-  </div>
+      <button type="button" class="btn">Add</button>
+      <input type="submit" value="Add Device">
+    </form>
 
 </body>
 
