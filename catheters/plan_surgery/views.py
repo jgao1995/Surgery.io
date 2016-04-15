@@ -106,7 +106,7 @@ def show_add_device_1(request):
     '''
     Renders the add device page selecting devicetypes
     '''
-    device_types = [x.name for x in DeviceType.objects.all]
+    device_types = [x.name for x in DeviceType.objects.all()]
     context = {'types': device_types}
     return render(request, 'add_device.html', context)
 
