@@ -144,6 +144,9 @@ def createDependencies():
                 # dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
                 # dependence.save()
                 continue
+            dependencies = DeviceDependency.objects.filter(device_1=device, device_2=other)
+            if len(dependencies) < 1:
+                continue
             # get the rule out
             rule = rules[0]
             # parse the fields to compare out of each

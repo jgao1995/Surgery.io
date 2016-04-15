@@ -4,7 +4,7 @@
       <meta charset="utf-8">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
       <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>All</title>
+      <title>Add Device Type</title>
       {% load bootstrap3 %}
       {% bootstrap_css %}
       {% bootstrap_javascript %}
@@ -28,30 +28,16 @@
   </nav>
 
   <div class="container">
-    <h2>Add Device</h2>
-    <ul class="list-group">
-      {% for d in devices %}
-        <li class="list-group-item">
-        <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
-        </li>
-      {% endfor %}
-    </ul>
+    <h2>Add Device Type</h2>
+    <div class="form-group">
+      <label for="name">Name:</label>
+      <input type="name" class="form-control" id="name">
+    </div>
+    <div class="form-group">
+      <label for="pwd">Fields:</label>
+      <input type="password" class="form-control" id="pwd">
+    </div>
   </div>
-
-  <div class="container">
-    <form method="get" action="/add_device_2">
-    <h2>Select Device Type</h2>
-    <select name="dropdown" id="cd-dropdown" class="cd-select">
-      {% for t in types %}
-        <option value="{{t}}">{{t}}</option>
-      {% endfor %}
-    </select>
-    <button type="submit" class="btn">Next</button>
-    </form>
-  </div>
-
-
-
 </body>
 
 </html>

@@ -6,6 +6,7 @@ urlpatterns = [
     url(r'^all/$', views.all, name="all"),
     url(r'^add_device/$', views.show_add_device_1, name="Add Device"),
     url(r'^add_device_2/$', views.show_add_device_2, name="Add Device2"),
+    url(r'^submit_device/$', views.add_device, name="Add Device Post"),
     url(r'^$', views.index, name='Index'),
     url(r'/search', views.search, name='Search'),
     url(r'/dsearch', views.dynamic_search, name="JSON Results"),

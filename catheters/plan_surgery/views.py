@@ -1,7 +1,7 @@
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django import forms
-from plan_surgery.models import Device, Surgery
+from plan_surgery.models import Device, Surgery, createDependencies
 from collections import defaultdict
 
 import re
@@ -115,26 +115,34 @@ def show_add_device_2(request):
     '''
     Renders the add device page part 2
     '''
-    device_type_name = request.GET['device_type']
-    device_type = DeviceType.objects.filter(name=device_type_name)
+    device_type_name = request.GET['dropdown']
+    device_type = DeviceType.objects.filter(name=device_type_name)[0]
     fields = json.loads(device_type.fields)
-    context = {'fields': fields}
+    context = {'fields': fields, "device_type_name": device_type_name}
     return render(request, 'add_device_2.html', context)
 
 
 def add_device(request):
     ''' receives post request for adding a device to the database'''
     device_type_name = request.POST['device_type']
-    device_type = DeviceType.objects.filter(name=device_type_name)
-    field_values = request.POST.list('field_values')
+    device_type = DeviceType.objects.filter(name=device_type_name)[0]
     fields = json.loads(device_type.fields)
+    # embed(s)
+
+    d = {}
+    for field in fields:
+        d[field] = request.POST[field]
+    dimensions = json.dumps(d)
     manufacturer = request.POST['manufacturer']
     brand_name = request.POST['brand_name']
     description = request.POST['description']
-    dimensions = json.dumps(dict(zip(fields, field_values)))
+
     device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=dimensions, product_type=device_type)
-    if not device.save():
-        return render(request, 'error.html')
+    device.save()
+
+    # create new dependencies.
+    createDependencies()
+
     return redirect('all')
 
 
