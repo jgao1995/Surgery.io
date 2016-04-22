@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static "stylesheets/new_surgery.css" %}">
+    <script src = "https://code.jquery.com/jquery-2.1.4.min.js" ></script>
+    <script type="text/javascript"> 
+      var devices = [];
+      var add_device = function(id) {
+        console.log("it worked for " + id);
+        devices.push(id);
+        console.log(devices);
+        update_list();
+      };
+      var remove_device = function(id) {
+        console.log("removed device " + id);
+        var index = devices.indexOf(id);
+        if (index > -1) {
+          devices.splice(index, 1);
+        }
+        console.log(devices);
+        $("#device"+id).html("");
+      }
+      var update_list = function() {
+        var htmlOut = "";
+        console.log(devices.length);
+        for (var i = 0; i < devices.length; i++) {
+          device = devices[i];
+          $.getJSON('/device/'+device+'/JSON', function(json) {
+            console.log("this is json:" +json);
+            htmlOut += "<li><a id='device"+device+"' href='#' onclick='remove_device("+device+");'>"+ json['brand_name'] + " " + json['man'] + " " + json['description'] + " " + json['type'] +"</a></li>";
+            $("#active_device_list").html(htmlOut);
+          });
+        }
+      }
+    </script>
+  </head>
+
+  <body>
+    <h1> Plan a surgery </h1>
+    <div id='all_devices'>
+      <h2> All Available Catheters </h2>
+      <ul class="list-group">
+        {% for d in devices %}
+          <li class="list-group-item">
+          <a id="device" href="#" onclick="add_device({{d.id}});" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
+          </li>
+	      {% endfor %}
+	    </ul>
+    </div>
+
+    <div id='active_devices'>
+      <h2> Current Catheters in Surgery </h2>
+      <ul id='active_device_list'>
+      </ul>
+    </div>
+  </body>
+</html>

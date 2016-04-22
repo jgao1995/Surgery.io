@@ -288,6 +288,54 @@ def add_device(request):
     return redirect('all')
 
 
+<<<<<<< HEAD
+=======
+def new_surgery(request):
+    if request.method == "GET":
+        devices = Device.objects.all()
+        context = {"devices" : devices}
+        return render(request, 'plan_surgery/new_surgery.html', context)
+    else:
+        new_surgery = Surgery()
+        new_surgery.save()
+        all_devices = Device.objects.all()
+        context = {"devices": all_devices, "surgery": new_surgery}
+
+
+def add_device_to_surgery(request, id):
+    device = Device.objects.get(pk=id) 
+    results = defaultdict(str)
+    results['man'] = str(device.manufacturer)
+    results['brand_name'] = str(device.brand_name)
+    results['description'] = str(device.description)
+    results['type'] = str(device.product_type)
+    return JsonResponse(dict(results))
+
+def show(request, id, message=""):
+    '''
+    Renders the show page for a given catheter ID
+    '''
+    device = Device.objects.get(pk=id)
+    compatible = compatibleDevices(device)
+    results = defaultdict(list)
+    for dev in compatible:
+        if isinstance(dev.dimensions, unicode):
+            dev_dims = json.loads(dev.dimensions)
+        else:
+            dev_dims = dev.dimensions[0]
+        results[dev.product_type].append((dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
+    links = None
+    if device.useful_links:
+        links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
+    if isinstance(device.dimensions, unicode):
+        dims = json.loads(device.dimensions)
+    else:
+        dims = device.dimensions[0]
+    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
+    return render(request, 'plan_surgery/show.html', context)
+    
+
+>>>>>>> 190f59e28890a4cd72e04664388a8e3728112368
 def add_video(request, id):
     '''
     Allows the user to add videos to a page through the add video button
