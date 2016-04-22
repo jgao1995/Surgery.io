@@ -146,6 +146,24 @@ def add_device(request):
     return redirect('all')
 
 
+def new_surgery(request):
+    if request.method == "GET":
+        return render(request, 'plan_surgery/new_surgery.html')
+    else:
+        new_surgery = Surgery()
+        new_surgery.save()
+        all_devices = Device.objects.all()
+        context = {"devices": all_devices, "surgery": new_surgery}
+
+
+# def add_device_to_surgery(request, id):
+    # print("We here!")
+    # device_id = request.GET['device']
+    # device = Device.objects.get(pk=device_id) 
+    # surgery = Surgery.objects.get(pk=id)
+    # surgery.devices.add(device)
+    # return JsonResponse({"code": "success"})
+
 def show(request, id, message=""):
     '''
     Renders the show page for a given catheter ID

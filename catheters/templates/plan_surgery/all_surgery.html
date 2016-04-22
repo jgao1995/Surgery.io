@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1> All Surgeries </h1>
+      <ul>
+        {% for d in surgery.devices.all %}
+          <li> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} </li>
+        {% endfor %}
+      </ul>
+  </div>
+
