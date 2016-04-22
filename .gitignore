@@ -7,3 +7,4 @@ ENV/
 *.sqlite3
 log.txt
 *.DS_Store
+.DS_Store
