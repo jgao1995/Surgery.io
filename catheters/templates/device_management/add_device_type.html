@@ -1,43 +1,55 @@
-<!doctype html>
-<html>
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Add Device Type</title>
-      {% load bootstrap3 %}
-      {% bootstrap_css %}
-      {% bootstrap_javascript %}
-      {# Display django.contrib.messages as Bootstrap alerts #}
-      {% bootstrap_messages %}
-    </head>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style type="text/css">
+  .login-box {
+    max-width: 330px;
+  }
+  .login-box .form-control {
+    margin-bottom: 10px;
+  }
+</style>
+
+<script type="text/javascript">
+  window.onload = function() {
+    var i = 2;
+    function createfieldField() {
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.name = 'field_' + i;
+      input.id = 'field_' + i;
+      input.size = '20';
+      input.className = 'form-control';
+      input.placeholder = 'Field name';
+      i++;
+      return input;
+    }
+    var form = document.getElementById('askForm');
+    var button = document.getElementById('addfield');
+    document.getElementById('addfield').addEventListener('click', function(e) {
+      button.parentNode.insertBefore(createfieldField(), button);
+    });
+  }
+</script>
 
 <body>
-
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">
-          <p> Catheter App </p>
-        </a>
-      </div>
-      <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-      <a class="navbar-brand" href="/all">All Devices</a>
-      <a class="navbar-brand" href="/admin">Add Devices</a>
-    </div>
-  </nav>
-
   <div class="container">
     <h2>Add Device Type</h2>
-    <div class="form-group">
+    <div class="login-box">
+    <form action="/add_device_type/" method="post">
+      {% csrf_token %}
       <label for="name">Name:</label>
-      <input type="name" class="form-control" id="name">
-    </div>
-    <div class="form-group">
-      <label for="pwd">Fields:</label>
-      <input type="password" class="form-control" id="pwd">
-    </div>
+      <input name="name" class="form-control" id="name" placeholder="Device type name">
+      <label for="name">Fields:</label>
+      <input type="text" name="field_1" id="field_1" size="20" class="form-control" placeholder="Field name">
+      <button type="button" id="addfield" class="btn btn-sm">Add another field</button>
+      <br>
+      <br>
+      <input type="submit" value="Add" class="btn btn-lg btn-primary btn-block">
+    </form>
   </div>
+
 </body>
 
-</html>
+{% endblock %}

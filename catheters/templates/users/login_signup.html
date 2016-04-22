@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style type="text/css">
+  .login-box {
+    max-width: 330px;
+  }
+  .login-box .form-control {
+    margin-bottom: 10px;
+  }
+</style>
+<body>
+
+  <div class="container">
+    <h4>{% if error %} {{ error }} {% endif %}</h4>
+    <h2>Login</h2>
+    <div class="login-box">
+      <form action="/login/" method="post">
+      {% csrf_token %}
+        <input type="text" name="username" size="20" class="form-control" placeholder="Username">
+        <input type="password" name="password" size="20" class="form-control" placeholder="Password">
+        <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block">
+      </form>
+    </div>
+    <br>
+    <br>
+    <h2>Sign Up</h2>
+    <div class="login-box">
+      <form action="/signup/" method="post">
+      {% csrf_token %}
+        <p>Please fill out the following information:</p>
+        <input type="text" name="username" size="20" class="form-control" placeholder="Username">
+        <input type="password" name="password" size="20" class="form-control" placeholder="Password">
+      <input type="submit" value="Sign Up" class="btn btn-lg btn-primary btn-block">
+      </form>
+    </div>
+  </div>
+</body>
+
+{% endblock %}

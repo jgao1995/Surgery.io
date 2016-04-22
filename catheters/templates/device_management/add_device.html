@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body>
+
+  <div class="container">
+    <h2>Add Device</h2>
+    <ul class="list-group">
+      {% for d in devices %}
+        <li class="list-group-item">
+        <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="container">
+    <form method="get" action="/add_device_2">
+    <h2>Select Device Type</h2>
+    <select name="dropdown" id="cd-dropdown" class="cd-select">
+      {% for t in types %}
+        <option value="{{t}}">{{t}}</option>
+      {% endfor %}
+    </select>
+    <button type="submit" class="btn">Next</button>
+    </form>
+  </div>
+
+</body>
+{% endblock %}

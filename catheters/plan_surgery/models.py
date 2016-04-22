@@ -140,6 +140,7 @@ def createDependencies():
         for other in devices:
             # look in the rules graph for the right rule
             rules = TypeDependency.objects.filter(device_type_1 = device.product_type, device_type_2 = other.product_type)
+            rules2 = TypeDependency.objects.filter(device_type_2 = device.product_type, device_type_1 = other.product_type)
             if len(rules) < 1:
                 # dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
                 # dependence.save()

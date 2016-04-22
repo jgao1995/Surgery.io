@@ -1,43 +1,42 @@
-<!doctype html>
-<html>
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>All</title>
-      {% load bootstrap3 %}
-      {% bootstrap_css %}
-      {% bootstrap_javascript %}
-      {# Display django.contrib.messages as Bootstrap alerts #}
-      {% bootstrap_messages %}
-  	</head>
+{% extends 'base.html' %}
+
+{% block content %}
 
 <body>
 
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">
-          <p> Catheter App </p>
-        </a>
-      </div>
-      <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-      <a class="navbar-brand" href="/all">All Devices</a>
-      <a class="navbar-brand" href="/admin">Add Devices</a>
-    </div>
-  </nav>
-
   <div class="container">
-    <h2> All Devices </h2>
+    <h2>All Devices</h2>
     <ul class="list-group">
-      {% for d in devices %}
-        <li class="list-group-item">
-        <a href="/device/{{ d.id }}/"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
-        </li>
-	    {% endfor %}
-	  </ul>
-    <a href="/add_device"><button type="button" class="btn btn-warning">Add Device</button></a>
-	</div>
+    {% for product_type, devices in results.items %}
+      <h4>{{product_type}}s</h4>
+      <table class="table table-condensed">
+        <thead>
+          <tr>
+            <th>Manufacturer</th>
+            <th>Brand Name</th>
+            <th>Description</th>
+            {% for key in devices.0.3 %}
+            <th>{{key}} (in) </th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for device in devices %}
+          <tr>
+            <td>{{ device.0 }}</td>
+            <td>{{ device.1 }}</td>
+            <td>{{ device.2 }}</td>
+            {% for value in device.5 %}
+            <td>{{value}}</td>
+            {% endfor %}
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+  </div>
 </body>
 
-</html>
+
+
+{% endblock %}

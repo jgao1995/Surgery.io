@@ -1,43 +1,20 @@
-<!doctype html>
-<html>
-    <head>
-      <meta charset="utf-8">
-      <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <title>Catheter App</title>
-      {% load bootstrap3 %}
-      {% bootstrap_css %}
-      {% bootstrap_javascript %}
-      {# Display django.contrib.messages as Bootstrap alerts #}
-      {% bootstrap_messages %}
-  </head>
+{% extends 'base.html' %}
 
-  <body>
-
-  <nav class="navbar navbar-default">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="/">
-          <p> <strong> Catheter App </strong></p>
-        </a>
-      </div>
-      <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-      <a class="navbar-brand" href="/all">View Catheters</a>
-      <a class="navbar-brand" href="/admin">Add Devices</a>
-    </div>
-  </nav>
+{% block content %}
+<body>
 
 
-  <div class="container">
-    <div class="jumbotron">
-      <h1> Welcome to Catheter App! </h1>
-      <h2> Please select an action. </h2>
-      <a href="/plan_surgery"><button type="button" class="btn btn-danger">Plan Surgery</button></a>
-      <a href="/admin"><button type="button" class="btn btn-primary">Add Catheter</button></a>
-      <a href="/all"><button type="button" class="btn btn-warning">View All Catheters</button></a>
-    </div>
-  </div>
 
-  </body>
+<div class="container">
+<div class="jumbotron">
+  <h1> Welcome to Catheter App! </h1>
+  <h2> Please select an action. </h2>
+  <a href="/plan_surgery"><button type="button" class="btn btn-danger">Plan Surgery</button></a>
+  <a href="/admin"><button type="button" class="btn btn-primary">Add Catheter</button></a>
+  <a href="/all"><button type="button" class="btn btn-warning">View All Catheters</button></a>
+</div>
+</div>
 
-</html>
+</body>
+
+{% endblock %}

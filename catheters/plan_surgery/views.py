@@ -1,7 +1,13 @@
 from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponse, JsonResponse
 from django import forms
-from plan_surgery.models import Device, Surgery, createDependencies
+from plan_surgery.models import *
+from django.contrib import messages
+
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+
+
 from collections import defaultdict
 
 import re
@@ -11,8 +17,190 @@ import urllib
 import requests
 from IPython import embed
 
-class NameForm(forms.Form):
-    your_name = forms.CharField(label='Enter catheter name ', max_length=100)
+# Views are here.
+
+
+def index(request):
+    '''
+    Renders the homepage 
+    '''
+    if not request.user.is_authenticated():
+        return render(request, 'users/login_signup.html')
+    return render(request, 'index.html')
+
+
+def signup(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        if not User.objects.filter(username=username).exists():
+            user = User.objects.create_user(username, email=None, password=password)
+            user.save()
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('index')
+        else:
+            # username exists
+            messages.add_message(request, messages.ERROR, 'That username already exists. Please use a new username.',fail_silently=True)
+            return render(request, 'users/login_signup.html', {'error': 'Username exists'})
+    else:
+        return render(request, 'users/login_signup.html')
+
+
+def log_in(request):
+    if request.method == "POST":
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            # password is verified
+            login(request, user)
+            return redirect('index')
+        else:
+            messages.add_message(request, messages.ERROR, 'Incorrect login information.',fail_silently=True)
+            return render(request, 'users/login_signup.html')
+    else:
+        # GET
+        if request.user.is_authenticated():
+            return redirect('index')
+        return render(request, 'users/login_signup.html')
+
+def log_out(request):
+    if not request.user.is_authenticated():
+        return redirect('index')
+    logout(request)
+    messages.add_message(request, messages.SUCCESS, 'Logged out successfully.',fail_silently=True)
+    return redirect('index')
+
+
+def plan_surgery(request):
+    '''
+    Renders the plan surgery page
+    '''
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        return render(request, 'users/login_signup.html')
+    from django import forms
+    class NameForm(forms.Form):
+        your_name = forms.CharField(label='Enter catheter name ', max_length=100)
+
+    context = { "form" : NameForm() }
+    return render(request, 'plan_surgery/index.html', context)
+    
+
+def all(request):
+    '''
+    Renders the all catheters page
+    '''
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        return render(request, 'users/login_signup.html')
+    devices = Device.objects.all()
+    results = defaultdict(list)
+    for device in devices:
+        if isinstance(device.dimensions, unicode):
+            dims = json.loads(device.dimensions)
+        else:
+            dims = device.dimensions[0]
+        results[device.product_type].append([device.manufacturer, device.brand_name, device.description, dims, device.id])
+    for product_type in results:
+        fields_order = results[product_type][0][3].keys()
+        for result in results[product_type]:
+            vals = [result[3][field] for field in fields_order]
+            result.append(vals)
+    context = {'results': dict(results)}
+    return render(request, 'plan_surgery/all.html', context)
+
+
+def add_device_type(request):
+    ''' add device type page'''
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        return render(request, 'users/login_signup.html')
+    if not request.user.is_superuser:
+        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        return redirect('index')
+
+    if request.method == 'GET':
+        return render(request, 'device_management/add_device_type.html')
+    elif request.method == 'POST':
+        if DeviceType.objects.filter(name__iexact=request.POST['name']).exists():
+            messages.add_message(request, messages.ERROR, 'Device type with name {} already exists.'.format(request.POST['name']), fail_silently=True)
+            return redirect('add_device_type')
+        num_fields = len(request.POST) - 2
+        fields = []
+        for i in range(1, num_fields + 1):
+            # interest_i
+            fields.append(request.POST['field_{}'.format(i)].strip().lower())
+        name = request.POST['name']
+        new_type = DeviceType(name=name, fields=json.dumps(fields))
+        new_type.save()
+        messages.add_message(request, messages.SUCCESS, 'Successfully created new Device Type: {}.'.format(new_type.name), fail_silently=True)
+        return redirect('index')
+
+
+
+def show_add_device_1(request):
+    '''
+    Renders the add device page selecting devicetypes
+    '''
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        return render(request, 'users/login_signup.html')
+    if not request.user.is_superuser:
+        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        return redirect('index')
+
+    device_types = [x.name for x in DeviceType.objects.all()]
+    context = {'types': device_types}
+    return render(request, 'device_management/add_device.html', context)
+
+
+def show_add_device_2(request):
+    '''
+    Renders the add device page part 2
+    '''
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        return render(request, 'users/login_signup.html')
+    if not request.user.is_superuser:
+        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        return redirect('index')
+    device_type_name = request.GET['dropdown']
+    device_type = DeviceType.objects.filter(name=device_type_name)[0]
+    fields = json.loads(device_type.fields)
+    context = {'fields': fields, "device_type_name": device_type_name}
+    return render(request, 'device_management/add_device_2.html', context)
+
+
+
+def show(request, id, message=""):
+    '''
+    Renders the show page for a given catheter ID
+    '''
+    if not request.user.is_authenticated():
+        return render(request, 'users/login_signup.html')
+    device = Device.objects.get(pk=id)
+    compatible = compatibleDevices(device)
+    results = defaultdict(list)
+    for dev in compatible:
+        if isinstance(dev.dimensions, unicode):
+            dev_dims = json.loads(dev.dimensions)
+        else:
+            dev_dims = dev.dimensions[0]
+        results[dev.product_type].append((dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
+    links = None
+    if device.useful_links:
+        links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
+    if isinstance(device.dimensions, unicode):
+        dims = json.loads(device.dimensions)
+    else:
+        dims = device.dimensions[0]
+    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
+    return render(request, 'plan_surgery/show.html', context)
+    
+
+# AJAX stuff
 
 
 def compatibleDevices(catheter):
@@ -70,56 +258,6 @@ def dynamic_search(request):
     context = {'results': dict(results)}
     return JsonResponse({'results': dict(results)})
 
-from plan_surgery.models import *
-
-# Views are here.
-
-
-def index(request):
-    '''
-    Renders the homepage 
-    '''
-    return render(request, 'index.html')
-
-
-def plan_surgery(request):
-    '''
-    Renders the plan surgery page
-    '''
-    from django import forms
-    class NameForm(forms.Form):
-        your_name = forms.CharField(label='Enter catheter name ', max_length=100)
-
-    context = { "form" : NameForm() }
-    return render(request, 'plan_surgery/index.html', context)
-    
-
-def all(request):
-    '''
-    Renders the all catheters page
-    '''
-    devices = Device.objects.all()      
-    context = {"devices" : devices}
-    return render(request, 'plan_surgery/all.html', context)
-    
-def show_add_device_1(request):
-    '''
-    Renders the add device page selecting devicetypes
-    '''
-    device_types = [x.name for x in DeviceType.objects.all()]
-    context = {'types': device_types}
-    return render(request, 'add_device.html', context)
-
-
-def show_add_device_2(request):
-    '''
-    Renders the add device page part 2
-    '''
-    device_type_name = request.GET['dropdown']
-    device_type = DeviceType.objects.filter(name=device_type_name)[0]
-    fields = json.loads(device_type.fields)
-    context = {'fields': fields, "device_type_name": device_type_name}
-    return render(request, 'add_device_2.html', context)
 
 
 def add_device(request):
@@ -130,8 +268,12 @@ def add_device(request):
     # embed(s)
 
     d = {}
+    # USE INCHES as internal measurement. convert cm, Fr to in
+    conversion = {'cm': 0.393700787, 'Fr': 0.013123359580052493}
     for field in fields:
-        d[field] = request.POST[field]
+        unit = request.POST[field + '_unit']
+        d[field] = conversion[unit]* float(request.POST[field])
+
     dimensions = json.dumps(d)
     manufacturer = request.POST['manufacturer']
     brand_name = request.POST['brand_name']
@@ -145,30 +287,6 @@ def add_device(request):
 
     return redirect('all')
 
-
-def show(request, id, message=""):
-    '''
-    Renders the show page for a given catheter ID
-    '''
-    device = Device.objects.get(pk=id)
-    compatible = compatibleDevices(device)
-    results = defaultdict(list)
-    for dev in compatible:
-        if isinstance(dev.dimensions, unicode):
-            dev_dims = json.loads(dev.dimensions)
-        else:
-            dev_dims = dev.dimensions[0]
-        results[dev.product_type].append((dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
-    links = None
-    if device.useful_links:
-        links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
-    if isinstance(device.dimensions, unicode):
-        dims = json.loads(device.dimensions)
-    else:
-        dims = device.dimensions[0]
-    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
-    return render(request, 'plan_surgery/show.html', context)
-    
 
 def add_video(request, id):
     '''
