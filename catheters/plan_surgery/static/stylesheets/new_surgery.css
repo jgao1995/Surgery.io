@@ -1,19 +1,26 @@
-#parent_div_1 {
+#all_devices {
     width:auto;
     height:auto;
-    min-width: 300px;
-    min-height: 300px;
+    min-width: 500px;
+    min-height: 500px;
     border:1px solid black;
     margin-right:10px;
     float:left;
 }
-#parent_div_2 {
+#active_devices {
     width:auto;
     height:auto;
-    min-width: 300px;
-    min-height: 300px;
+    min-width: 500px;
+    min-height: 500px;
     border:1px solid black;
     margin-right:10px;
     float:left;
 }
+
+li {
+    list-style-type: none;
+    padding-left:0;
+
+}
+
 

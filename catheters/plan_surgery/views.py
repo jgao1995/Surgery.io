@@ -148,7 +148,9 @@ def add_device(request):
 
 def new_surgery(request):
     if request.method == "GET":
-        return render(request, 'plan_surgery/new_surgery.html')
+        devices = Device.objects.all()
+        context = {"devices" : devices}
+        return render(request, 'plan_surgery/new_surgery.html', context)
     else:
         new_surgery = Surgery()
         new_surgery.save()
@@ -156,13 +158,14 @@ def new_surgery(request):
         context = {"devices": all_devices, "surgery": new_surgery}
 
 
-# def add_device_to_surgery(request, id):
-    # print("We here!")
-    # device_id = request.GET['device']
-    # device = Device.objects.get(pk=device_id) 
-    # surgery = Surgery.objects.get(pk=id)
-    # surgery.devices.add(device)
-    # return JsonResponse({"code": "success"})
+def add_device_to_surgery(request, id):
+    device = Device.objects.get(pk=id) 
+    results = defaultdict(str)
+    results['man'] = str(device.manufacturer)
+    results['brand_name'] = str(device.brand_name)
+    results['description'] = str(device.description)
+    results['type'] = str(device.product_type)
+    return JsonResponse(dict(results))
 
 def show(request, id, message=""):
     '''

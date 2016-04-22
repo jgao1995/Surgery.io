@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'plan_surgery',
     'bootstrap3',
-    'django_extensions'
+    'django_extensions',
 ]
 
 MIDDLEWARE_CLASSES = [
