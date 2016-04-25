@@ -95,14 +95,13 @@
   </head>
 
   <body>
-
     <h1> Plan a surgery </h1>
     <div id='all_devices'>
       <h2> All Available Device </h2>
       <ul class="list-group">
         {% for d in devices %}
           <li class="list-group-item">
-          <a id="device" href="#" onclick="add_device({{d.id}});" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
+          <a id="device" href="#" onclick="add_device({{d.id}});" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a> 
           </li>
 	      {% endfor %}
 	    </ul>
