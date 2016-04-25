@@ -29,6 +29,7 @@
         devices.push(id);
         console.log(devices);
         update_list();
+        load_visualization();
       };
       var remove_device = function(id) {
         console.log("removed device " + id);
@@ -118,6 +119,8 @@
       <h2> Visualization </h2>
       <canvas id="visual_surgery" height="450" width="300"> </canvas>
       <script>
+        function load_visualization() {
+
           var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
           canvas.add(new fabric.Rect({
           left: 150,
@@ -134,7 +137,7 @@
           left: 150,
           top: 100,
           height: 40,
-          width: 120,
+          width: 80,
           opacity: 0.5, 
           hasBorders: false,
           hasControls: false,
@@ -148,13 +151,13 @@
           canvas.forEachObject(function(obj) {
             if (obj === options.target) return;
               //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
-              var fit = obj.getHeight() > options.target.getHeight();
-              obj.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
-              options.target.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
-              console.log('it worked');
+              var heightFit = obj.getHeight() > options.target.getHeight();
+              var widthFit = obj.getWidth() >= options.target.getWidth();
+              obj.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
+              options.target.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
             });
           }
-
+        }
       </script>
     </div>
 
