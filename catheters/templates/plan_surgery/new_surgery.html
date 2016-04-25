@@ -23,11 +23,12 @@
     <script src = "https://code.jquery.com/jquery-2.1.4.min.js" ></script>
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.js" > </script>
     <script type="text/javascript"> 
+      var author_id = "{{ author_id }}";
       var devices = [];
       var add_device = function(id) {
         devices.push(id);
         update_list();
-        load_visualization();
+        //add_device();
       };
       var remove_device = function(id) {
         var index = devices.indexOf(id);
@@ -36,9 +37,10 @@
         }
         $("#device"+id).html("");
         update_list();
-        load_visualization();
+        add_device();
       }
       var update_list = function() {
+        console.log("called update list");
         var htmlOut = "";
         console.log(devices.length);
         console.log(devices);
@@ -82,10 +84,10 @@
           document.getElementById('addsurgery').addEventListener('click', function(e){submit()}); 
       }
       var submit = function () {
-          $.post('/plan_surgery/add_surgery', JSON.stringify(devices), function (response) { console.log("submitted!")}, "json");
-          console.log(devices);
+          $.post('/plan_surgery/add_surgery', JSON.stringify({'devices': JSON.stringify(devices), 'user_id': author_id}), function (response, status) {
+            window.location.href = '/plan_surgery/all';
+          });
       }
-    });
     </script>
       
   </head>
@@ -97,7 +99,7 @@
       <ul class="list-group">
         {% for d in devices %}
           <li class="list-group-item">
-          <a id="device" href="/device/{{ d.id }}/" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }} </a> <button type="button" onclick="add_device({{d.id}});"  id="addsurgery" class="btn btn-sm">Add Button</button>
+          <a id="device" href="/device/{{ d.id }}/" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }} </a> <button type="button" onclick="add_device({{d.id}});" class="btn btn-sm">Add Button</button>
           </li>
 	      {% endfor %}
 	    </ul>
@@ -112,12 +114,12 @@
 
     <div id="visualization">
       <h2> Visualization </h2>
-      <canvas id="visual_surgery" height="425" width="700"> </canvas>
+      <canvas id="visual_surgery" height="425" width="600"> </canvas>
       <script>
-        function load_visualization() {
+        var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
+        var add_device = function() {
           console.log("visualization called");
-          console.log(devices);
-          var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
+          console.log('length: '+devices.length);
           canvas.add(new fabric.Rect({
             left: 150,
             top: 100,
