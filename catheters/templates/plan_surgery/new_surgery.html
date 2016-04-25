@@ -25,9 +25,10 @@
     <script type="text/javascript"> 
       var devices = [];
       var add_device = function(id) {
+        console.log('first add device:' + id);
         devices.push(id);
         update_list();
-        //add_device();
+        add_device_to_canvas();
       };
       var remove_device = function(id) {
         var index = devices.indexOf(id);
@@ -36,7 +37,6 @@
         }
         $("#device"+id).html("");
         update_list();
-        add_device();
       }
       var update_list = function() {
         console.log("called update list");
@@ -117,7 +117,7 @@
       <canvas id="visual_surgery" height="425" width="600"> </canvas>
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
-        var add_device = function() {
+        var add_device_to_canvas = function() {
           console.log("visualization called");
           console.log('length: '+devices.length);
           canvas.add(new fabric.Rect({
