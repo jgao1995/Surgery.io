@@ -93,32 +93,13 @@
   </head>
 
   <body>
-    <nav class="navbar navbar-default">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <a class="navbar-brand" href="/">
-            <p> Catheter App </p>
-          </a>
-        </div>
-        <a class="navbar-brand" href="/plan_surgery">Plan Surgery</a>
-        <a class="navbar-brand" href="/all">All Devices</a>
-        <a class="navbar-brand" href="/add_device">Add Device</a>
-        <a class="navbar-brand" href="/add_device_type">Add Device Type</a>
-        {% if request.user.is_authenticated %}
-        <a class="navbar-brand navbar-right" href="/logout">Log Out</a>
-        {% else %}
-        <a class="navbar-brand navbar-right" href="/login">Log In</a>
-        {% endif %}
-      </div>
-    </nav>
-
     <h1> Plan a surgery </h1>
     <div id='all_devices'>
       <h2> All Available Device </h2>
       <ul class="list-group">
         {% for d in devices %}
           <li class="list-group-item">
-          <a id="device" href="#" onclick="add_device({{d.id}});" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
+          <a id="device" href="#" onclick="add_device({{d.id}});" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a> 
           </li>
 	      {% endfor %}
 	    </ul>
