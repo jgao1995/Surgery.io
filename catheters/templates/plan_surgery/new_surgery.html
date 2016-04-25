@@ -29,6 +29,7 @@
         devices.push(id);
         console.log(devices);
         update_list();
+        load_visualization();
       };
       var remove_device = function(id) {
         console.log("removed device " + id);
@@ -39,6 +40,7 @@
         console.log(devices);
         $("#device"+id).html("");
         update_list();
+        load_visualization();
       }
       var update_list = function() {
         var htmlOut = "";
@@ -51,46 +53,44 @@
             $("#active_device_list").html(htmlOut);
           });
         }
-        console.log("htmlOut: "+htmlOut);
       }
-    function getCookie(name) {
-      var cookieValue = null;
-      if (document.cookie && document.cookie != '') {
-          var cookies = document.cookie.split(';');
-          for (var i = 0; i < cookies.length; i++) {
-              var cookie = jQuery.trim(cookies[i]);
-              // Does this cookie string begin with the name we want?
-              if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                  break;
-              }
-          }
+      function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
       }
-      return cookieValue;
-    }
-    function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    var csrftoken = getCookie('csrftoken');
-    $.ajaxSetup({
-      beforeSend: function(xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
+      function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
       }
-    });
-    window.onload = function() {
-        var submit_surgery =  document.getElementById('addsurgery');
-        document.getElementById('addsurgery').addEventListener('click', function(e){submit()}); 
-    }
-    var submit = function () {
-        $.post('/plan_surgery/add_surgery', JSON.stringify(devices), function (response) { console.log("submitted!")}, "json");
-        console.log(devices);
-    }
+      var csrftoken = getCookie('csrftoken');
+      $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+      });
+      window.onload = function() {
+          var submit_surgery =  document.getElementById('addsurgery');
+          document.getElementById('addsurgery').addEventListener('click', function(e){submit()}); 
+      }
+      var submit = function () {
+          $.post('/plan_surgery/add_surgery', JSON.stringify(devices), function (response) { console.log("submitted!")}, "json");
+          console.log(devices);
+      }
 
     </script>
-
       
   </head>
 
@@ -116,20 +116,24 @@
 
     <div id="visualization">
       <h2> Visualization </h2>
-      <canvas id="visual_surgery" height="450" width="300"> </canvas>
+      <canvas id="visual_surgery" height="425" width="700"> </canvas>
       <script>
+        function load_visualization() {
+          console.log("visualization called");
+          console.log(devices);
           var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
           canvas.add(new fabric.Rect({
-          left: 150,
-          top: 150,
-          height: 50,
-          width: 120,
-          opacity: 0.5, 
-          hasBorders: false,
-          hasControls: false,
-          hasRotatingPoint: false,
-          fill: 'black'
+            left: 150,
+            top: 150,
+            height: 50,
+            width: 120,
+            opacity: 0.5, 
+            hasBorders: false,
+            hasControls: false,
+            hasRotatingPoint: false,
+            fill: 'black'
           }));
+        }
 
       </script>
     </div>
