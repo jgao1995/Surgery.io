@@ -139,6 +139,28 @@ def add_device_type(request):
         return redirect('index')
 
 
+def all_surgeries(request):
+    print "hello"
+    surgeries = Surgery.objects.all()
+    context = {"surgeries": surgeries}
+    return render(request, 'plan_surgery/all_surgery.html', context)
+
+def add_surgery(request):
+    if request.method == 'POST':
+
+        device_ids = json.loads(request.body)
+        print device_ids
+        # how to add to database?
+        # get redirect to work? 
+        #print devices
+        return redirect('All Surgeries')
+    if not request.user.is_authenticated():
+        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        return render(request, 'users/login_signup.html')
+    if not request.user.is_superuser:
+        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        return redirect('index')
+   
 
 def show_add_device_1(request):
     '''
@@ -297,6 +319,7 @@ def new_surgery(request):
         new_surgery.save()
         all_devices = Device.objects.all()
         context = {"devices": all_devices, "surgery": new_surgery}
+
 
 
 def add_device_to_surgery(request, id):
