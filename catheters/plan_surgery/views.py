@@ -90,8 +90,12 @@ def plan_surgery(request):
 
 def all(request):
     '''
-    Renders the all catheters page
+    Renders the all devices page
     '''
+    units = 'in'
+    if 'unit' in request.GET:
+        units = request.GET['unit']
+    conversion = {'in': 1.0, 'Fr': 76.2, 'cm': 2.54}
     if not request.user.is_authenticated():
         messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
         return render(request, 'users/login_signup.html')
@@ -102,13 +106,15 @@ def all(request):
             dims = json.loads(device.dimensions)
         else:
             dims = device.dimensions[0]
+        for k in dims:
+            dims[k] = "%.2f" % (float(dims[k]) * conversion[units])
         results[device.product_type].append([device.manufacturer, device.brand_name, device.description, dims, device.id])
     for product_type in results:
         fields_order = results[product_type][0][3].keys()
         for result in results[product_type]:
             vals = [result[3][field] for field in fields_order]
             result.append(vals)
-    context = {'results': dict(results)}
+    context = {'results': dict(results), 'units': units}
     return render(request, 'plan_surgery/all.html', context)
 
 
@@ -140,19 +146,21 @@ def add_device_type(request):
 
 
 def all_surgeries(request):
-    print "hello"
     surgeries = Surgery.objects.all()
-    context = {"surgeries": surgeries}
+    context = {"surgeries": [{'author': {'username': surgery.author.username, 'id': surgery.author.id}, 'date': surgery.created_date, 'id': surgery.id} for surgery in surgeries]}
     return render(request, 'plan_surgery/all_surgery.html', context)
 
 def add_surgery(request):
     if request.method == 'POST':
-
-        device_ids = json.loads(request.body)
-        print device_ids
-        # how to add to database?
-        # get redirect to work? 
-        #print devices
+        data = json.loads(request.body)
+        device_ids = json.loads(data['devices'])
+        devices = []
+        author = User.objects.get(pk=int(data['user_id']))
+        surgery = Surgery(author=author)
+        surgery.save()
+        for dev_id in device_ids:
+            surgery.devices.add(Device.objects.get(pk=dev_id))
+        surgery.save()          
         return redirect('All Surgeries')
     if not request.user.is_authenticated():
         messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
@@ -257,7 +265,6 @@ def search(request):
         if device.useful_links:
             links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
         results[device.product_type].append((device.manufacturer, device.brand_name, device.description, dims, device.notes, links, device.id))
-        print links
     context = {'results': dict(results)}
     return render(request, 'plan_surgery/search_results.html', context)
 
@@ -312,7 +319,8 @@ def add_device(request):
 def new_surgery(request):
     if request.method == "GET":
         devices = Device.objects.all()
-        context = {"devices" : devices}
+        # embed()
+        context = {"devices" : devices, 'author_id': request.user.id}
         return render(request, 'plan_surgery/new_surgery.html', context)
     else:
         new_surgery = Surgery()

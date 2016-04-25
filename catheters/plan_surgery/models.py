@@ -2,8 +2,10 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.utils import timezone
+from django.contrib.auth.models import User
 
 from jsonfield import JSONField
+
 
 import json
 
@@ -78,8 +80,8 @@ class Surgery(models.Model):
     May want to add creator
     '''
     devices = models.ManyToManyField(Device)
-    remaining_dimensions =  JSONField()
     created_date = models.DateTimeField(default=timezone.now)
+    author = models.ForeignKey(User)
 
 def add_device_to_database(manufacturer, brand_name, description, product_type, dims=None):
     '''
@@ -94,16 +96,6 @@ def add_device_to_database(manufacturer, brand_name, description, product_type, 
     device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=json.dumps(dimensions), remaining_dimensions=json.dumps(dimensions))
 
     return device.save()
-
-def create_surgery():
-    '''
-    creates a sample Surgery and saves it.
-
-    rtype: Surgery
-    '''
-    surgery = Surgery()
-    surgery.save()
-    return surgery
 
 def add_device_to_surgery(device_in, device_into):
     # Assume device has been saved.
