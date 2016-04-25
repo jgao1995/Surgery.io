@@ -131,17 +131,20 @@
             hasRotatingPoint: false,
             fill: 'red'
           }));
+        }
           canvas.on({'object:moving': onChange});
           
           function onChange(options) {
-            options.target.setCoords();
-            canvas.forEachObject(function(obj) {
-              if (obj === options.target) return;
-                //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
-                var fit = obj.getHeight() > options.target.getHeight();
-                obj.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
-                options.target.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
-                console.log('it worked');
+
+          options.target.setCoords();
+          canvas.forEachObject(function(obj) {
+            if (obj === options.target) return;
+              //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
+              var heightFit = obj.getHeight() > options.target.getHeight();
+              var widthFit = obj.getWidth() >= options.target.getWidth();
+              obj.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
+              options.target.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
+
             });
           }
         }
