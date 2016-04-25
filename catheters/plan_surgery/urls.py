@@ -13,12 +13,12 @@ urlpatterns = [
 
     # ADD DEVICE TYPE
     url(r'^add_device_type/$', views.add_device_type, name="add device type"),
-
     url(r'^$', views.index, name='index'),
     url(r'/search', views.search, name='Search'),
     url(r'/dsearch', views.dynamic_search, name="JSON Results"),
     url(r'^plan_surgery/$', views.plan_surgery, name='Plan Surgery'),
     url(r'^plan_surgery/new', views.new_surgery),
+    url(r'^plan_surgery/all', views.all_surgeries),
     url(r'^device/(?P<id>[0-9]+)/$', views.show, name='Device show'),
     url(r'^device/(?P<id>[0-9]+)/JSON$', views.add_device_to_surgery),
     url(r'^device/(?P<id>[0-9]+)/add_video', views.add_video),

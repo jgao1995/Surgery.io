@@ -1,7 +1,7 @@
 #all_devices {
     width:auto;
     height:auto;
-    min-width: 500px;
+    min-width: 200px;
     min-height: 500px;
     border:1px solid black;
     margin-right:10px;
@@ -10,7 +10,7 @@
 #active_devices {
     width:auto;
     height:auto;
-    min-width: 500px;
+    min-width: 200px;
     min-height: 500px;
     border:1px solid black;
     margin-right:10px;
