@@ -129,8 +129,32 @@
           hasBorders: false,
           hasControls: false,
           hasRotatingPoint: false,
-          fill: 'black'
+          fill: 'red'
           }));
+          canvas.add(new fabric.Rect({
+          left: 150,
+          top: 100,
+          height: 40,
+          width: 120,
+          opacity: 0.5, 
+          hasBorders: false,
+          hasControls: false,
+          hasRotatingPoint: false,
+          fill: 'red'
+          }));
+          canvas.on({'object:moving': onChange});
+          
+          function onChange(options) {
+          options.target.setCoords();
+          canvas.forEachObject(function(obj) {
+            if (obj === options.target) return;
+              //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
+              var fit = obj.getHeight() > options.target.getHeight();
+              obj.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
+              options.target.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
+              console.log('it worked');
+            });
+          }
 
       </script>
     </div>
