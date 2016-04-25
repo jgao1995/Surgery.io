@@ -340,10 +340,6 @@ def add_device_to_surgery(request, id):
     results['type'] = str(device.product_type)
     return JsonResponse(dict(results))
 
-
-def all_surgeries(request):
-    return HttpResponse("<h1> Page was found </h1>")
-
 def show(request, id, message=""):
     '''
     Renders the show page for a given catheter ID
