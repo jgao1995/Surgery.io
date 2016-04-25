@@ -21,6 +21,7 @@
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "stylesheets/new_surgery.css" %}">
     <script src = "https://code.jquery.com/jquery-2.1.4.min.js" ></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.js" > </script>
     <script type="text/javascript"> 
       var devices = [];
       var add_device = function(id) {
@@ -87,6 +88,7 @@
         $.post('/plan_surgery/add_surgery', JSON.stringify(devices), function (response) { console.log("submitted!")}, "json");
         console.log(devices);
     }
+
     </script>
 
       
@@ -111,6 +113,27 @@
       </ul>
       <button type="button" id="addsurgery" class="btn btn-sm">Add Surgery</button>
     </div>
+
+    <div id="visualization">
+      <h2> Visualization </h2>
+      <canvas id="visual_surgery" height="450" width="300"> </canvas>
+      <script>
+          var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
+          canvas.add(new fabric.Rect({
+          left: 150,
+          top: 150,
+          height: 50,
+          width: 120,
+          opacity: 0.5, 
+          hasBorders: false,
+          hasControls: false,
+          hasRotatingPoint: false,
+          fill: 'black'
+          }));
+
+      </script>
+    </div>
+
   </body>
 </html>
 

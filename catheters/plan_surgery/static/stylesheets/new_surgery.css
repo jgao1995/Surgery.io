@@ -16,6 +16,15 @@
     margin-right:10px;
     float:left;
 }
+#visualization {
+    width:auto;
+    height:auto;
+    min-width: 200px;
+    min-height: 500px;
+    border:1px solid black;
+    margin-right:10px;
+    float:left;
+}
 
 li {
     list-style-type: none;
