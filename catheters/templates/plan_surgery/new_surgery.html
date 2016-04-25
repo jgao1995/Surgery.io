@@ -13,38 +13,42 @@
 
 <html>
   <head>
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "stylesheets/new_surgery.css" %}">
     <script src = "https://code.jquery.com/jquery-2.1.4.min.js" ></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.js" > </script>
     <script type="text/javascript"> 
       var author_id = "{{ author_id }}";
       var devices = [];
       var add_device = function(id) {
-        console.log("it worked for " + id);
         devices.push(id);
-        console.log(devices);
         update_list();
       };
       var remove_device = function(id) {
-        console.log("removed device " + id);
         var index = devices.indexOf(id);
         if (index > -1) {
           devices.splice(index, 1);
         }
-        console.log(devices);
         $("#device"+id).html("");
+        update_list();
       }
       var update_list = function() {
         var htmlOut = "";
         console.log(devices.length);
+        console.log(devices);
         for (var i = 0; i < devices.length; i++) {
           device = devices[i];
           $.getJSON('/device/'+device+'/JSON', function(json) {
-            console.log("this is json:" +json);
             htmlOut += "<li><a id='device"+device+"' href='#' onclick='remove_device("+device+");'>"+ json['brand_name'] + " " + json['man'] + " " + json['description'] + " " + json['type'] +"</a></li>";
             $("#active_device_list").html(htmlOut);
           });
         }
+        console.log("htmlOut: "+htmlOut);
       }
     function getCookie(name) {
       var cookieValue = null;
@@ -82,6 +86,7 @@
           window.location.href = '/plan_surgery/all';
         });
     }
+
     </script>
 
       
@@ -90,22 +95,67 @@
   <body>
     <h1> Plan a surgery </h1>
     <div id='all_devices'>
-      <h2> All Available Catheters </h2>
+      <h2> All Available Device </h2>
       <ul class="list-group">
         {% for d in devices %}
           <li class="list-group-item">
-          <a id="device" href="#" onclick="add_device({{d.id}});" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }}</a>
+          <a id="device" href="/device/{{ d.id }}/" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }} </a> <button type="button" onclick="add_device({{d.id}});"  id="addsurgery" class="btn btn-sm">Add Button</button>
           </li>
 	      {% endfor %}
 	    </ul>
     </div>
 
     <div id='active_devices'>
-      <h2> Current Catheters in Surgery </h2>
+      <h2> Current Device in Surgery </h2>
       <ul id='active_device_list'>
       </ul>
       <button type="button" id="addsurgery" class="btn btn-sm">Add Surgery</button>
     </div>
+
+    <div id="visualization">
+      <h2> Visualization </h2>
+      <canvas id="visual_surgery" height="450" width="300"> </canvas>
+      <script>
+          var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
+          canvas.add(new fabric.Rect({
+          left: 150,
+          top: 150,
+          height: 50,
+          width: 120,
+          opacity: 0.5, 
+          hasBorders: false,
+          hasControls: false,
+          hasRotatingPoint: false,
+          fill: 'red'
+          }));
+          canvas.add(new fabric.Rect({
+          left: 150,
+          top: 100,
+          height: 40,
+          width: 120,
+          opacity: 0.5, 
+          hasBorders: false,
+          hasControls: false,
+          hasRotatingPoint: false,
+          fill: 'red'
+          }));
+          canvas.on({'object:moving': onChange});
+          
+          function onChange(options) {
+          options.target.setCoords();
+          canvas.forEachObject(function(obj) {
+            if (obj === options.target) return;
+              //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
+              var fit = obj.getHeight() > options.target.getHeight();
+              obj.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
+              options.target.setColor(options.target.intersectsWithObject(obj) && fit ? 'green' : 'red');
+              console.log('it worked');
+            });
+          }
+
+      </script>
+    </div>
+
   </body>
 </html>
 

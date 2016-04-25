@@ -13,7 +13,6 @@ urlpatterns = [
 
     # ADD DEVICE TYPE
     url(r'^add_device_type/$', views.add_device_type, name="add device type"),
-
     url(r'^$', views.index, name='index'),
     url(r'/search', views.search, name='Search'),
     url(r'/dsearch', views.dynamic_search, name="JSON Results"),
