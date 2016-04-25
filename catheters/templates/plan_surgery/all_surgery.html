@@ -3,9 +3,12 @@
   <body>
     <h1> All Surgeries </h1>
       <ul>
-        {% for d in surgery.devices.all %}
-          <li> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} </li>
-        {% endfor %}
+      	{% for surgery in surgeries%}
+      		<li> 
+	        {% for s in surgery.devices.all %}
+	          <li> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} </li>
+	        {% endfor %}
+	    {% endfor %}
       </ul>
   </div>
 
