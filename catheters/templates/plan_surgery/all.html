@@ -7,6 +7,14 @@
   <div class="container">
     <h2>All Devices</h2>
     <ul class="list-group">
+    <form method="get" action="/all">
+      <select name="unit" id="cd-dropdown" class="cd-select">
+        <option value="in">in</option>
+        <option value="cm">cm</option>
+        <option value="Fr">Fr</option>
+      </select>
+      <button type="submit" class="btn">Refresh Units</button>
+    </form>
     {% for product_type, devices in results.items %}
       <h4>{{product_type}}s</h4>
       <table class="table table-condensed">
@@ -16,7 +24,7 @@
             <th>Brand Name</th>
             <th>Description</th>
             {% for key in devices.0.3 %}
-            <th>{{key}} (in) </th>
+            <th>{{key}} ({{ units }}) </th>
             {% endfor %}
           </tr>
         </thead>

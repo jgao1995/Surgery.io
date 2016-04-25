@@ -1,14 +1,18 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <h1> All Surgeries </h1>
-      <ul>
-      	{% for surgery in surgeries%}
-      		<li> 
-	        {% for s in surgery.devices.all %}
-	          <li> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} </li>
-	        {% endfor %}
-	    {% endfor %}
-      </ul>
+{% extends 'base.html' %}
+
+{% block content %}
+
+<body>
+
+  <div class="container">
+    <h2>All Surgeries</h2>
+    <ul class="list-group">
+
+    {% for surgery in surgeries %}
+      <li class="list-group-item">Surgery created by <a href="/user/{{surgery.author.id}}">{{ surgery.author.username }}</a> at {{ surgery.date }}</li>
+    {% endfor %}
   </div>
+</body>
+
+{% endblock %}
 
