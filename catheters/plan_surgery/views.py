@@ -310,7 +310,6 @@ def add_device(request):
     return redirect('all')
 
 
-
 def new_surgery(request):
     if request.method == "GET":
         devices = Device.objects.all()
@@ -332,6 +331,10 @@ def add_device_to_surgery(request, id):
     results['description'] = str(device.description)
     results['type'] = str(device.product_type)
     return JsonResponse(dict(results))
+
+
+def all_surgeries(request):
+    return HttpResponse("<h1> Page was found </h1>")
 
 def show(request, id, message=""):
     '''

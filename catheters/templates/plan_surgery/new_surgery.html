@@ -13,9 +13,15 @@
 
 <html>
   <head>
+    {% load bootstrap3 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
     {% load staticfiles %}
     <link rel="stylesheet" type="text/css" href="{% static "stylesheets/new_surgery.css" %}">
     <script src = "https://code.jquery.com/jquery-2.1.4.min.js" ></script>
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.js" > </script>
     <script type="text/javascript"> 
       var devices = [];
       var add_device = function(id) {
@@ -28,9 +34,15 @@
           devices.splice(index, 1);
         }
         $("#device"+id).html("");
+        update_list();
       }
       var update_list = function() {
         var htmlOut = "";
+<<<<<<< HEAD
+=======
+        console.log(devices.length);
+        console.log(devices);
+>>>>>>> e13031feb8d521aa6e4bb0e176a63db655c3905f
         for (var i = 0; i < devices.length; i++) {
           device = devices[i];
           $.getJSON('/device/'+device+'/JSON', function(json) {
@@ -38,6 +50,7 @@
             $("#active_device_list").html(htmlOut);
           });
         }
+        console.log("htmlOut: "+htmlOut);
       }
     function getCookie(name) {
       var cookieValue = null;
@@ -73,6 +86,7 @@
     var submit = function () {
         $.post('/plan_surgery/add_surgery', JSON.stringify(devices), function (response) { console.log("submitted!")}, "json");
     }
+
     </script>
 
       
@@ -81,7 +95,7 @@
   <body>
     <h1> Plan a surgery </h1>
     <div id='all_devices'>
-      <h2> All Available Catheters </h2>
+      <h2> All Available Device </h2>
       <ul class="list-group">
         {% for d in devices %}
           <li class="list-group-item">
@@ -92,11 +106,32 @@
     </div>
 
     <div id='active_devices'>
-      <h2> Current Catheters in Surgery </h2>
+      <h2> Current Device in Surgery </h2>
       <ul id='active_device_list'>
       </ul>
       <button type="button" id="addsurgery" class="btn btn-sm">Add Surgery</button>
     </div>
+
+    <div id="visualization">
+      <h2> Visualization </h2>
+      <canvas id="visual_surgery" height="450" width="300"> </canvas>
+      <script>
+          var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
+          canvas.add(new fabric.Rect({
+          left: 150,
+          top: 150,
+          height: 50,
+          width: 120,
+          opacity: 0.5, 
+          hasBorders: false,
+          hasControls: false,
+          hasRotatingPoint: false,
+          fill: 'black'
+          }));
+
+      </script>
+    </div>
+
   </body>
 </html>
 
