@@ -287,9 +287,6 @@ def add_device(request):
 
     return redirect('all')
 
-
-<<<<<<< HEAD
-=======
 def new_surgery(request):
     if request.method == "GET":
         devices = Device.objects.all()
@@ -335,7 +332,6 @@ def show(request, id, message=""):
     return render(request, 'plan_surgery/show.html', context)
     
 
->>>>>>> 190f59e28890a4cd72e04664388a8e3728112368
 def add_video(request, id):
     '''
     Allows the user to add videos to a page through the add video button
