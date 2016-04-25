@@ -23,7 +23,6 @@
     <script src = "https://code.jquery.com/jquery-2.1.4.min.js" ></script>
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.js" > </script>
     <script type="text/javascript"> 
-      var author_id = "{{ author_id }}";
       var devices = [];
       var add_device = function(id) {
         devices.push(id);
@@ -81,7 +80,7 @@
         var submit_surgery =  document.getElementById('addsurgery');
         document.getElementById('addsurgery').addEventListener('click', function(e){submit()}); 
     }
-    var submit = function () {
+    var add_surgery = function (author_id) {
         $.post('/plan_surgery/add_surgery', JSON.stringify({'devices': JSON.stringify(devices), 'user_id': author_id}), function (response, status) {
           window.location.href = '/plan_surgery/all';
         });
@@ -109,7 +108,7 @@
       <h2> Current Device in Surgery </h2>
       <ul id='active_device_list'>
       </ul>
-      <button type="button" id="addsurgery" class="btn btn-sm">Add Surgery</button>
+      <button type="button" id="addsurgery" class="btn btn-sm" onclick="add_surgery({{author_id}});">Add Surgery</button>
     </div>
 
     <div id="visualization">
