@@ -29,6 +29,15 @@ def index(request):
     return render(request, 'index.html')
 
 
+def help(request):
+    '''
+    Renders the homepage 
+    '''
+    if not request.user.is_authenticated():
+        return render(request, 'users/login_signup.html')
+    return render(request, 'index.html')
+
+
 def signup(request):
     if request.method == 'POST':
         username = request.POST['username']
