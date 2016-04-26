@@ -31,11 +31,9 @@ def index(request):
 
 def help(request):
     '''
-    Renders the homepage 
+    Renders the help center 
     '''
-    if not request.user.is_authenticated():
-        return render(request, 'users/login_signup.html')
-    return render(request, 'index.html')
+    return render(request, 'help.html')
 
 
 def signup(request):
@@ -147,6 +145,11 @@ def add_device_type(request):
         for i in range(1, num_fields + 1):
             # interest_i
             fields.append(request.POST['field_{}'.format(i)].strip().lower())
+        required = ['thickness', 'diameter']
+        if 'length' not in fields or (not any(x not in field for field in fields for x in required)):
+            messages.add_message(request, message.ERROR, 'Device type needs a thickness / diameter')
+            return redirect('add_device_type')
+
         name = request.POST['name']
         new_type = DeviceType(name=name, fields=json.dumps(fields))
         new_type.save()
@@ -350,6 +353,7 @@ def add_device_to_surgery(request, id):
     results['brand_name'] = str(device.brand_name)
     results['description'] = str(device.description)
     results['type'] = str(device.product_type)
+    embed()
     return JsonResponse(dict(results))
 
 def show(request, id, message=""):
@@ -405,7 +409,34 @@ def add_video(request, id):
             return show(request, id, "Added video successfully.")
     return show(request, id, "Failed to add video. Please use a valid YouTube URL.")
 
-    
+
+def get_drawing_dimensions(device):
+    '''
+    gets width and length of device to be drawn.
+    length = device.length
+    width = a device's diameter/inner diameter, or thickness
+    '''
+    dimensions = load_dimensions(device.dimensions)
+    height = None
+    width = dimensions.get('length', None)
+    for key, v in dimensions.items():
+        if 'diameter' in key and 'inner' in key:
+            height = v
+        elif not height and 'diameter' in key:
+            height = v
+        elif not height and 'thickness' in key:
+            height = v
+    height, width = int(height) * 6000, int(width) * 0.8
+    return (height, width)
+
+
+
+def load_dimensions(dims):
+    if isinstance(dims, unicode):
+        return json.loads(dims)
+    else:
+        return dims[0]
+
 def add_comment(request, id):
     '''
     Allows the user to add comments to a page through the add comment button
