@@ -95,18 +95,18 @@
   <body>
     <h1> Plan a surgery </h1>
     <div id='all_devices'>
-      <h2> All Available Device </h2>
+      <h2> All Devices </h2>
       <ul class="list-group">
         {% for d in devices %}
           <li class="list-group-item">
-          <a id="device" href="/device/{{ d.id }}/" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }} </a> <button type="button" onclick="add_device({{d.id}});" class="btn btn-sm">Add Button</button>
+          <a id="device" href="/device/{{ d.id }}/" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }} </a> <button type="button" onclick="add_device({{d.id}});" class="btn btn-sm">Add Device</button>
           </li>
 	      {% endfor %}
 	    </ul>
     </div>
 
     <div id='active_devices'>
-      <h2> Current Device in Surgery </h2>
+      <h2> Selected Devices </h2>
       <ul id='active_device_list'>
       </ul>
       <button type="button" id="addsurgery" class="btn btn-sm" onclick="add_surgery({{author_id}});">Add Surgery</button>
@@ -114,7 +114,7 @@
 
     <div id="visualization">
       <h2> Visualization </h2>
-      <canvas id="visual_surgery" height="425" width="600"> </canvas>
+      <canvas id="visual_surgery" height="425" width="500"> </canvas>
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
         var add_device_to_canvas = function() {
@@ -131,7 +131,6 @@
             hasRotatingPoint: false,
             fill: 'red'
           }));
-        }
           canvas.on({'object:moving': onChange});
           
           function onChange(options) {

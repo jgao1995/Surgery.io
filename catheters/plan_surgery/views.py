@@ -229,7 +229,11 @@ def show(request, id, message=""):
     context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
     return render(request, 'plan_surgery/show.html', context)
     
-
+def search_devices(request):
+    '''
+    Renders the page to search for devices
+    '''
+    return render(request, 'plan_surgery/search_index.html')
 # AJAX stuff
 
 
@@ -320,7 +324,6 @@ def add_device(request):
 def new_surgery(request):
     if request.method == "GET":
         devices = Device.objects.all()
-        # embed()
         context = {"devices" : devices, 'author_id': request.user.id}
         return render(request, 'plan_surgery/new_surgery.html', context)
     else:
