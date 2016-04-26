@@ -9,7 +9,7 @@
         $("#results").html("");
         return;
       }
-      $.getJSON('/plan_surgery/dsearch?query='+escape(term), function(json) {
+      $.getJSON('/dsearch?query='+escape(term), function(json) {
         console.log(json['results']['name']);
         console.log(json['results']['name'][0][1]);
         device = json['results']['name'][0][0] + ': ' + json['results']['name'][0][1];
