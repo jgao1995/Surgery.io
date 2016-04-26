@@ -47,7 +47,7 @@
         for (var i = 0; i < devices.length; i++) {
           device = devices[i];
           $.getJSON('/device/'+device+'/JSON', function(json) {
-            htmlOut += "<li><a id='device"+device+"' href='#' onclick='remove_device("+device+");'>"+ json['brand_name'] + " " + json['man'] + " " + json['description'] + " " + json['type'] +"</a></li>";
+            htmlOut += "<li class='list-group-item'><a id='device"+device+"' href='#' onclick='remove_device("+device+");'>"+ json['brand_name'] + " " + json['man'] + " " + json['description'] + " " + json['type'] +"</a></li>";
             $("#active_device_list").html(htmlOut);
           });
         }
@@ -108,7 +108,7 @@
 
     <div id='active_devices'>
       <h2> Selected Devices </h2>
-      <ul id='active_device_list'>
+      <ul class ="list-group" id='active_device_list'>
       </ul>
       <button type="button" id="addsurgery" class="btn btn-sm" onclick="add_surgery({{author_id}});">Add Surgery</button>
     </div>
