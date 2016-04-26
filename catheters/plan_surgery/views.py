@@ -304,7 +304,6 @@ def dynamic_search(request):
     return JsonResponse({'results': dict(results)})
 
 
-
 def add_device(request):
     ''' receives post request for adding a device to the database'''
     device_type_name = request.POST['device_type']
@@ -347,13 +346,14 @@ def new_surgery(request):
 
 
 def add_device_to_surgery(request, id):
+    print("called add device to surgery")
     device = Device.objects.get(pk=id) 
     results = defaultdict(str)
     results['man'] = str(device.manufacturer)
     results['brand_name'] = str(device.brand_name)
     results['description'] = str(device.description)
     results['type'] = str(device.product_type)
-    embed()
+    results['height'], results['width'] = get_drawing_dimensions(device)
     return JsonResponse(dict(results))
 
 def show(request, id, message=""):
