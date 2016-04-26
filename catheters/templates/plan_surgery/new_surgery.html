@@ -28,7 +28,13 @@
         console.log('first add device:' + id);
         devices.push(id);
         update_list();
-        add_device_to_canvas(id);
+        $.getJSON('/device/'+device+'/JSON', function(json) {
+            var height = parseInt(json['height']);
+            var width = parseInt(json['width']);
+            console.log('JSON BRUH:' + json);
+            console.log('JSON:' + json['height'] + "::" + json['width']);
+            add_device_to_canvas(id, height, width);
+          });
       };
       var remove_device = function(id) {
         var index = devices.indexOf(id);
@@ -118,15 +124,16 @@
       <canvas id="visual_surgery" height="425" width="500"> </canvas>
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
-        var add_device_to_canvas = function(rect_id) {
+        var add_device_to_canvas = function(rect_id, dev_height, dev_width) {
           console.log('rectangle id: ' + rect_id);
           console.log("visualization called");
           console.log('length: '+devices.length);
+          console.log('args:: '+dev_height + " | " + dev_width);
           canvas.add(new fabric.Rect({
             left: 150,
             top: 100,
-            height: 40,
-            width: 120,
+            height: dev_height,
+            width: dev_width,
             opacity: 0.5, 
             hasBorders: false,
             hasControls: false,
