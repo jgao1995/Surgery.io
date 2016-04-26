@@ -28,7 +28,7 @@
         console.log('first add device:' + id);
         devices.push(id);
         update_list();
-        add_device_to_canvas();
+        add_device_to_canvas(id);
       };
       var remove_device = function(id) {
         var index = devices.indexOf(id);
@@ -37,6 +37,7 @@
         }
         $("#device"+id).html("");
         update_list();
+        remove_device_from_canvas(id);
       }
       var update_list = function() {
         console.log("called update list");
@@ -117,7 +118,8 @@
       <canvas id="visual_surgery" height="425" width="500"> </canvas>
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
-        var add_device_to_canvas = function() {
+        var add_device_to_canvas = function(rect_id) {
+          console.log('rectangle id: ' + rect_id);
           console.log("visualization called");
           console.log('length: '+devices.length);
           canvas.add(new fabric.Rect({
@@ -129,7 +131,8 @@
             hasBorders: false,
             hasControls: false,
             hasRotatingPoint: false,
-            fill: 'red'
+            fill: 'red',
+            id: rect_id
           }));
           canvas.on({'object:moving': onChange});
           
@@ -146,6 +149,14 @@
 
             });
           }
+        }
+
+        var remove_device_from_canvas = function(rect_id) {
+            for (var i = 0; i < canvas.getObjects().length; ++i) { 
+                if (canvas.item(i).id == rect_id) {
+                    canvas.item(i).remove(); break;
+                }
+            }
         }
       </script>
     </div>

@@ -351,12 +351,12 @@ def add_device_to_surgery(request, id):
     results['description'] = str(device.description)
     results['type'] = str(device.product_type)
     # embed()
-    if isinstance(device.dimensions, unicode):
-        dev_dims = json.loads(device.dimensions)
-    else:
-        dev_dims = dev.dimensions[0]
-    results['width'] = dev_dims['width']
-    results['length'] = dev_dims['length']
+    # if isinstance(device.dimensions, unicode):
+        # dev_dims = json.loads(device.dimensions)
+    # else:
+        # dev_dims = dev.dimensions[0]
+    # results['width'] = dev_dims['diameter']
+    # results['length'] = dev_dims['length']
     return JsonResponse(dict(results))
 
 def show(request, id, message=""):
