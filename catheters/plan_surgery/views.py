@@ -353,6 +353,7 @@ def add_device_to_surgery(request, id):
     results['description'] = str(device.description)
     results['type'] = str(device.product_type)
     results['height'], results['width'] = get_drawing_dimensions(device)
+    results['name'] = '{} {} {} {}'.format(str(device.brand_name), str(device.manufacturer), str(device.description), str(device.product_type))
     return JsonResponse(dict(results))
 
 def show(request, id, message=""):
@@ -384,18 +385,15 @@ def add_video(request, id):
     Allows the user to add videos to a page through the add video button
     '''
     device = Device.objects.get(pk=id)
-    useful_links = device.useful_links
-    if (useful_links is None):
+    # embed()
+    if not device.useful_links:
         links = []
     else:
         links = json.loads(device.useful_links)
-    link = request.GET['url']
-    link = urllib.unquote(link)
-    link = link.encode('ascii', 'ignore')
+    link = urllib.unquote(request.GET['url']).encode('ascii', 'ignore')
     # verify that link works.
     p = re.compile('https?://(www.)?youtube.com/watch\?v=(.*)')
     m = p.match(link)
-    # embed()
     if m:
         video_id = m.group(2)
         img_url = 'http://img.youtube.com/vi/{}/0.jpg'.format(video_id)

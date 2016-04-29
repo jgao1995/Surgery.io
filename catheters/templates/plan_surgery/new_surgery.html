@@ -31,8 +31,8 @@
         $.getJSON('/device/'+device+'/JSON', function(json) {
             var height = parseFloat(json['height']);
             var width = parseFloat(json['width']);
-            console.log('JSON:' + json['height'] + "::" + json['width']);
-            add_device_to_canvas(id, height, width);
+            console.log('JSON:' + json['height'] + "::" + json['width'] + "::" + json['name']);
+            add_device_to_canvas(id, height, width, json['name']);
           });
       };
       var remove_device = function(id) {
@@ -123,13 +123,14 @@
       <canvas id="visual_surgery" height="425" width="500"> </canvas>
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
-        var add_device_to_canvas = function(rect_id, dev_height, dev_width) {
+        var add_device_to_canvas = function(rect_id, dev_height, dev_width, name) {
           console.log('rectangle id: ' + rect_id);
           console.log("visualization called");
           console.log('length: '+devices.length);
           console.log('args:: '+dev_height + " | " + dev_width);
-          var text = new fabric.Text('hello world', {
-            fontSize: 20
+          var text = new fabric.Text(name, {
+            fontSize: 10,
+            color: 'black'
           });
           var rect = new fabric.Rect({
             height: dev_height,
