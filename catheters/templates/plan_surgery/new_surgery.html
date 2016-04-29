@@ -128,9 +128,11 @@
           console.log("visualization called");
           console.log('length: '+devices.length);
           console.log('args:: '+dev_height + " | " + dev_width);
-          canvas.add(new fabric.Rect({
-            left: 150,
-            top: 100,
+          var text = new fabric.Text('hello world', {
+            fontSize: 20
+          });
+          var rect = new fabric.Rect({
+            
             height: dev_height,
             width: dev_width,
             opacity: 0.5, 
@@ -139,7 +141,13 @@
             hasRotatingPoint: false,
             fill: 'red',
             id: rect_id
-          }));
+          });
+          var group = new fabric.Group([ text, rect ], {
+            left: 150,
+            top: 100,
+            angle: -10
+          });
+          canvas.add(group);
           canvas.on({'object:moving': onChange});
           
           function onChange(options) {
