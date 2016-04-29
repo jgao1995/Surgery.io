@@ -3,7 +3,6 @@ from django.http import HttpResponse, JsonResponse
 from django import forms
 from plan_surgery.models import *
 from django.contrib import messages
-
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
@@ -15,6 +14,7 @@ import json
 import code
 import urllib
 import requests
+
 from IPython import embed
 
 # Views are here.
@@ -41,14 +41,16 @@ def signup(request):
         username = request.POST['username']
         password = request.POST['password']
         if not User.objects.filter(username=username).exists():
-            user = User.objects.create_user(username, email=None, password=password)
+            user = User.objects.create_user(
+                username, email=None, password=password)
             user.save()
             user = authenticate(username=username, password=password)
             login(request, user)
             return redirect('index')
         else:
             # username exists
-            messages.add_message(request, messages.ERROR, 'That username already exists. Please use a new username.',fail_silently=True)
+            messages.add_message(
+                request, messages.ERROR, 'That username already exists. Please use a new username.', fail_silently=True)
             return render(request, 'users/login_signup.html', {'error': 'Username exists'})
     else:
         return render(request, 'users/login_signup.html')
@@ -64,7 +66,8 @@ def log_in(request):
             login(request, user)
             return redirect('index')
         else:
-            messages.add_message(request, messages.ERROR, 'Incorrect login information.',fail_silently=True)
+            messages.add_message(
+                request, messages.ERROR, 'Incorrect login information.', fail_silently=True)
             return render(request, 'users/login_signup.html')
     else:
         # GET
@@ -72,11 +75,13 @@ def log_in(request):
             return redirect('index')
         return render(request, 'users/login_signup.html')
 
+
 def log_out(request):
     if not request.user.is_authenticated():
         return redirect('index')
     logout(request)
-    messages.add_message(request, messages.SUCCESS, 'Logged out successfully.',fail_silently=True)
+    messages.add_message(
+        request, messages.SUCCESS, 'Logged out successfully.', fail_silently=True)
     return redirect('index')
 
 
@@ -85,17 +90,20 @@ def plan_surgery(request):
     Renders the plan surgery page
     '''
     if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Please log in to use this feature.', fail_silently=True)
         return render(request, 'users/login_signup.html')
-    from django import forms
-    class NameForm(forms.Form):
-        your_name = forms.CharField(label='Enter catheter name ', max_length=100)
-
-    context = { "form" : NameForm() }
-    return render(request, 'plan_surgery/index.html', context)
     
 
-def all(request):
+    class NameForm(forms.Form):
+        your_name = forms.CharField(
+            label='Enter catheter name ', max_length=100)
+
+    context = {"form": NameForm()}
+    return render(request, 'plan_surgery/index.html', context)
+
+
+def all_devices(request):
     '''
     Renders the all devices page
     '''
@@ -104,7 +112,8 @@ def all(request):
         units = request.GET['unit']
     conversion = {'in': 1.0, 'Fr': 76.2, 'cm': 2.54}
     if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Please log in to use this feature.', fail_silently=True)
         return render(request, 'users/login_signup.html')
     devices = Device.objects.all()
     results = defaultdict(list)
@@ -115,7 +124,8 @@ def all(request):
             dims = device.dimensions[0]
         for k in dims:
             dims[k] = "%.4f" % (float(dims[k]) * conversion[units])
-        results[device.product_type].append([device.manufacturer, device.brand_name, device.description, dims, device.id])
+        results[device.product_type].append(
+            [device.manufacturer, device.brand_name, device.description, dims, device.id])
     for product_type in results:
         fields_order = results[product_type][0][3].keys()
         for result in results[product_type]:
@@ -128,17 +138,20 @@ def all(request):
 def add_device_type(request):
     ''' add device type page'''
     if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Please log in to use this feature.', fail_silently=True)
         return render(request, 'users/login_signup.html')
     if not request.user.is_superuser:
-        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Only administrators can use this feature.', fail_silently=True)
         return redirect('index')
 
     if request.method == 'GET':
         return render(request, 'device_management/add_device_type.html')
     elif request.method == 'POST':
         if DeviceType.objects.filter(name__iexact=request.POST['name']).exists():
-            messages.add_message(request, messages.ERROR, 'Device type with name {} already exists.'.format(request.POST['name']), fail_silently=True)
+            messages.add_message(request, messages.ERROR, 'Device type with name {} already exists.'.format(
+                request.POST['name']), fail_silently=True)
             return redirect('add_device_type')
         num_fields = len(request.POST) - 2
         fields = []
@@ -147,20 +160,24 @@ def add_device_type(request):
             fields.append(request.POST['field_{}'.format(i)].strip().lower())
         required = ['thickness', 'diameter']
         if 'length' not in fields or (not any(x not in field for field in fields for x in required)):
-            messages.add_message(request, message.ERROR, 'Device type needs a thickness / diameter')
+            messages.add_message(
+                request, message.ERROR, 'Device type needs a thickness / diameter')
             return redirect('add_device_type')
 
         name = request.POST['name']
         new_type = DeviceType(name=name, fields=json.dumps(fields))
         new_type.save()
-        messages.add_message(request, messages.SUCCESS, 'Successfully created new Device Type: {}.'.format(new_type.name), fail_silently=True)
+        messages.add_message(request, messages.SUCCESS, 'Successfully created new Device Type: {}.'.format(
+            new_type.name), fail_silently=True)
         return redirect('index')
 
 
 def all_surgeries(request):
     surgeries = Surgery.objects.all()
-    context = {"surgeries": [{'author': {'username': surgery.author.username, 'id': surgery.author.id}, 'date': surgery.created_date, 'id': surgery.id} for surgery in surgeries]}
+    context = {"surgeries": [{'author': {'username': surgery.author.username, 'id': surgery.author.id},
+                              'date': surgery.created_date, 'id': surgery.id} for surgery in surgeries]}
     return render(request, 'plan_surgery/all_surgery.html', context)
+
 
 def add_surgery(request):
     if request.method == 'POST':
@@ -172,25 +189,29 @@ def add_surgery(request):
         surgery.save()
         for dev_id in device_ids:
             surgery.devices.add(Device.objects.get(pk=dev_id))
-        surgery.save()          
+        surgery.save()
         return redirect('All Surgeries')
     if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Please log in to use this feature.', fail_silently=True)
         return render(request, 'users/login_signup.html')
     if not request.user.is_superuser:
-        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Only administrators can use this feature.', fail_silently=True)
         return redirect('index')
-   
+
 
 def show_add_device_1(request):
     '''
     Renders the add device page selecting devicetypes
     '''
     if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Please log in to use this feature.', fail_silently=True)
         return render(request, 'users/login_signup.html')
     if not request.user.is_superuser:
-        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Only administrators can use this feature.', fail_silently=True)
         return redirect('index')
 
     device_types = [x.name for x in DeviceType.objects.all()]
@@ -203,17 +224,18 @@ def show_add_device_2(request):
     Renders the add device page part 2
     '''
     if not request.user.is_authenticated():
-        messages.add_message(request, messages.ERROR, 'Please log in to use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Please log in to use this feature.', fail_silently=True)
         return render(request, 'users/login_signup.html')
     if not request.user.is_superuser:
-        messages.add_message(request, messages.ERROR, 'Only administrators can use this feature.',fail_silently=True)
+        messages.add_message(
+            request, messages.ERROR, 'Only administrators can use this feature.', fail_silently=True)
         return redirect('index')
     device_type_name = request.GET['dropdown']
     device_type = DeviceType.objects.filter(name=device_type_name)[0]
     fields = json.loads(device_type.fields)
     context = {'fields': fields, "device_type_name": device_type_name}
     return render(request, 'device_management/add_device_2.html', context)
-
 
 
 def show(request, id, message=""):
@@ -223,24 +245,33 @@ def show(request, id, message=""):
     if not request.user.is_authenticated():
         return render(request, 'users/login_signup.html')
     device = Device.objects.get(pk=id)
-    compatible = compatibleDevices(device)
+    compatible = compatible_devices(device)
     results = defaultdict(list)
     for dev in compatible:
         if isinstance(dev.dimensions, unicode):
             dev_dims = json.loads(dev.dimensions)
         else:
             dev_dims = dev.dimensions[0]
-        results[dev.product_type].append((dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
+        results[dev.product_type].append((dev.manufacturer, dev.brand_name,
+            dev.description, dev_dims, dev.id))
     links = None
     if device.useful_links:
-        links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
+        links = [str(x).replace('watch?v=', 'v/')
+                 for x in json.loads(device.useful_links)]
     if isinstance(device.dimensions, unicode):
         dims = json.loads(device.dimensions)
     else:
         dims = device.dimensions[0]
-    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
+    context = {"compatible_devices": dict(results), "dimensions": dims,
+               "manufacturer": device.manufacturer,
+               "brand_name": device.brand_name,
+               "description": device.description,
+               "product_type": device.product_type,
+               "id": id, "notes": device.notes, "useful_links": links,
+               "message": message}
     return render(request, 'plan_surgery/show.html', context)
-    
+
+
 def search_devices(request):
     '''
     Renders the page to search for devices
@@ -249,9 +280,9 @@ def search_devices(request):
 # AJAX stuff
 
 
-def compatibleDevices(catheter):
+def compatible_devices(catheter):
     '''
-    Given a device, returns the compatible devices according to the rules defined in the Dependency database
+    Given a device, returns the compatible devices according to the rulesdefined in the Dependency database
     '''
     adjacency_list_1 = DeviceDependency.objects.filter(device_1=catheter)
     adjacency_list_2 = DeviceDependency.objects.filter(device_2=catheter)
@@ -264,13 +295,15 @@ def compatibleDevices(catheter):
             compatible.append(dependency.device_1)
     return compatible
 
+
 def search(request):
     '''
     Search function that returns results when you press the search button. Finds any devices 
     that have the query in their manufacturer, name, or description.
     '''
     query = request.GET['query']
-    query_set = Device.objects.filter(manufacturer__contains=query) | Device.objects.filter(brand_name__contains=query) | Device.objects.filter(description__contains=query)
+    query_set = Device.objects.filter(manufacturer__contains=query) | Device.objects.filter(
+        brand_name__contains=query) | Device.objects.filter(description__contains=query)
     results = defaultdict(list)
     for device in query_set:
         if isinstance(device.dimensions, unicode):
@@ -279,8 +312,10 @@ def search(request):
             dims = device.dimensions[0]
         links = None
         if device.useful_links:
-            links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
-        results[device.product_type].append((device.manufacturer, device.brand_name, device.description, dims, device.notes, links, device.id))
+            links = [str(x).replace('watch?v=', 'v/')
+                     for x in json.loads(device.useful_links)]
+        results[device.product_type].append(
+            (device.manufacturer, device.brand_name, device.description, dims, device.notes, links, device.id))
     context = {'results': dict(results)}
     return render(request, 'plan_surgery/search_results.html', context)
 
@@ -291,7 +326,8 @@ def dynamic_search(request):
     dynamic search suggestions
     '''
     query = request.GET['query']
-    query_set = Device.objects.filter(manufacturer__contains=query) | Device.objects.filter(brand_name__contains=query) | Device.objects.filter(description__contains=query)
+    query_set = Device.objects.filter(manufacturer__contains=query) | Device.objects.filter(
+        brand_name__contains=query) | Device.objects.filter(description__contains=query)
     results = defaultdict(list)
     for device in query_set:
         # code.interact(local=locals())
@@ -299,7 +335,8 @@ def dynamic_search(request):
             dims = json.loads(device.dimensions)
         else:
             dims = device.dimensions[0]
-        results['name'].append((str(device.product_type), device.manufacturer, device.brand_name, device.description, dims, device.id))
+        results['name'].append(
+            (str(device.product_type), device.manufacturer, device.brand_name, device.description, dims, device.id))
     context = {'results': dict(results)}
     return JsonResponse({'results': dict(results)})
 
@@ -316,14 +353,15 @@ def add_device(request):
     conversion = {'cm': 0.393700787, 'Fr': 0.013123359580052493, 'in': 1}
     for field in fields:
         unit = request.POST[field + '_unit']
-        d[field] = conversion[unit]* float(request.POST[field])
+        d[field] = conversion[unit] * float(request.POST[field])
 
     dimensions = json.dumps(d)
     manufacturer = request.POST['manufacturer']
     brand_name = request.POST['brand_name']
     description = request.POST['description']
 
-    device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=dimensions, product_type=device_type)
+    device = Device(manufacturer=manufacturer, brand_name=brand_name,
+                    description=description, dimensions=dimensions, product_type=device_type)
     device.save()
     # create new dependencies.
     createDependencies()
@@ -334,7 +372,7 @@ def add_device(request):
 def new_surgery(request):
     if request.method == "GET":
         devices = Device.objects.all()
-        context = {"devices" : devices, 'author_id': request.user.id}
+        context = {"devices": devices, 'author_id': request.user.id}
         return render(request, 'plan_surgery/new_surgery.html', context)
     else:
         new_surgery = Surgery()
@@ -343,42 +381,46 @@ def new_surgery(request):
         context = {"devices": all_devices, "surgery": new_surgery}
 
 
-
 def add_device_to_surgery(request, id):
     print("called add device to surgery")
-    device = Device.objects.get(pk=id) 
+    device = Device.objects.get(pk=id)
     results = defaultdict(str)
     results['man'] = str(device.manufacturer)
     results['brand_name'] = str(device.brand_name)
     results['description'] = str(device.description)
     results['type'] = str(device.product_type)
     results['height'], results['width'] = get_drawing_dimensions(device)
-    results['name'] = '{} {} {} {}'.format(str(device.brand_name), str(device.manufacturer), str(device.description), str(device.product_type))
+    results['name'] = '{} {} {} {}'.format(str(device.brand_name), str(
+        device.manufacturer), str(device.description), str(device.product_type))
     return JsonResponse(dict(results))
+
 
 def show(request, id, message=""):
     '''
     Renders the show page for a given catheter ID
     '''
     device = Device.objects.get(pk=id)
-    compatible = compatibleDevices(device)
+    compatible = compatible_devices(device)
     results = defaultdict(list)
     for dev in compatible:
         if isinstance(dev.dimensions, unicode):
             dev_dims = json.loads(dev.dimensions)
         else:
             dev_dims = dev.dimensions[0]
-        results[dev.product_type].append((dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
+        results[dev.product_type].append(
+            (dev.manufacturer, dev.brand_name, dev.description, dev_dims, dev.id))
     links = None
     if device.useful_links:
-        links = [str(x).replace('watch?v=', 'v/') for x in json.loads(device.useful_links)]
+        links = [str(x).replace('watch?v=', 'v/')
+                 for x in json.loads(device.useful_links)]
     if isinstance(device.dimensions, unicode):
         dims = json.loads(device.dimensions)
     else:
         dims = device.dimensions[0]
-    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name, "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
+    context = {"compatible_devices": dict(results), "dimensions": dims, "manufacturer": device.manufacturer, "brand_name": device.brand_name,
+               "description": device.description, "product_type": device.product_type, "id": id, "notes": device.notes, "useful_links": links, "message": message}
     return render(request, 'plan_surgery/show.html', context)
-    
+
 
 def add_video(request, id):
     '''
@@ -417,18 +459,17 @@ def get_drawing_dimensions(device):
     height = None
     width = dimensions.get('length', None)
     for key, v in dimensions.items():
-        print 'KEY:',key,'VALUE:',v
+        print 'KEY:', key, 'VALUE:', v
         if 'diameter' in key and 'inner' in key:
             height = v
         elif not height and 'diameter' in key:
             height = v
         elif not height and 'thickness' in key:
             height = v
-            print 'YO WHAT TH EUF KUC', height, 'v',v, 'key',key
+            print 'YO WHAT TH EUF KUC', height, 'v', v, 'key', key
     height, width = float(height) * 1000, float(width) * 6
-    print 'HEIGHT:',height, 'WIDTH:',width
+    print 'HEIGHT:', height, 'WIDTH:', width
     return (height, width)
-
 
 
 def load_dimensions(dims):
@@ -436,6 +477,7 @@ def load_dimensions(dims):
         return json.loads(dims)
     else:
         return dims[0]
+
 
 def add_comment(request, id):
     '''
@@ -451,4 +493,3 @@ def add_comment(request, id):
     device.notes = current
     device.save()
     return show(request, id)
-

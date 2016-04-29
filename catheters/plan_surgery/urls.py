@@ -3,7 +3,9 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url(r'^all/$', views.all, name="all"),
+
+    # INDEX
+    url(r'^$', views.index, name='index'),
 
     # DEVICE MANAGEMENT
     # ADD DEVICE
@@ -11,12 +13,18 @@ urlpatterns = [
     url(r'^add_device_2/$', views.show_add_device_2, name="Add Device2"),
     url(r'^submit_device/$', views.add_device, name="Add Device Post"),
 
-    # ADD DEVICE TYPE
-    url(r'^add_device_type/$', views.add_device_type, name="add device type"),
-    url(r'^$', views.index, name='index'),
+
+    # ALL DEVICES
+    url(r'^all/$', views.all_devices, name="all"),
     url(r'^search$', views.search, name='Search'),
     url(r'^dsearch$', views.dynamic_search, name="JSON Results"),
     url(r'^device_search$', views.search_devices),
+
+    # ADD DEVICE TYPE
+    url(r'^add_device_type/$', views.add_device_type, name="add device type"),
+    
+    
+    # PLAN SURGERY
     url(r'^plan_surgery/$', views.plan_surgery, name='Plan Surgery'),
     url(r'^plan_surgery/all$', views.all_surgeries, name='All Surgeries'),
     url(r'^plan_surgery/new', views.new_surgery),

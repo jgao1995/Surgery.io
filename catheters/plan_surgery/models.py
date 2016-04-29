@@ -97,7 +97,10 @@ def add_device_to_database(manufacturer, brand_name, description, product_type, 
 
     return device.save()
 
-def add_device_to_surgery(device_in, device_into):
+def add_device_to_surgery(device_in, device_into, surgery):
+    '''
+    Adds the device to a surgery.
+    '''
     # Assume device has been saved.
     # Check the dependency
     if DeviceDependency.get(device_1=device_into, device_2=device_in) == 1:
@@ -121,11 +124,10 @@ class DeviceDependency(models.Model):
     def __str__(self):
         return '{0} to {1} has dependency {2}'.format(self.device_1, self.device_2, self.edgeType)
 
-def update(device_into, device_in):
-    # TO DO
-    return
-
-def createDependencies():
+def create_dependencies():
+    '''
+    Creates all unexisting dependencies between devices, using the dependencies between DeviceTypes
+    '''
     devices = Device.objects.all()
     # for each device, look at the relationship with every other device
     for device in devices:
@@ -172,7 +174,7 @@ def createDependencies():
                 print 'Saved dependency between',device,'and',other
 
 
-def updateDependencies():
+def update_dependencies():
     '''
     Performs a mass update over all dependencies between devices, using the dependencies between DeviceTypes
     '''
@@ -286,10 +288,12 @@ def create_dependency(type_1, type_2, field_1, field_2, comparator):
 
 
 def seed_db():
-    ''' seeds the db with sample data for testing purposes'''
+    '''
+    seeds the db with sample data for testing purposes
+    '''
     createDummyDependency()
     wire1, catheter2 = create_dummy_devices()
-    createDependencies()
+    create_dependencies()
 
 
 
