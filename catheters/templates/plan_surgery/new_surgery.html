@@ -131,13 +131,14 @@
           var text = new fabric.Text(name, {
             fontSize: 10,
             fontWeight: 'bold', 
-            color: 'black'
+            color: 'black', 
+            id: rect_id
           });
           var rect = new fabric.Rect({
             height: dev_height,
             width: dev_width,
             opacity: 0.5, 
-            fill: 'red',
+            fill: 'red', 
             id: rect_id
           });
           var group = new fabric.Group([ text, rect ], {
@@ -167,9 +168,11 @@
         }
 
         var remove_device_from_canvas = function(rect_id) {
-            for (var i = 0; i < canvas.getObjects().length; ++i) { 
-                if (canvas.item(i).id == rect_id) {
-                    canvas.item(i).remove(); break;
+          var objects = canvas.getObjects();
+            for (var i = 0; i < objects.length; ++i) { 
+                console.log(objects[i]._objects[0].id);
+                if (objects[i]._objects[0].id == rect_id) {
+                    canvas.remove(objects[i]);
                 }
             }
         }
