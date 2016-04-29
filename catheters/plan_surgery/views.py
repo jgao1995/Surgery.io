@@ -398,7 +398,6 @@ def new_surgery(request):
 
 
 def add_device_to_surgery(request, id):
-    print("called add device to surgery")
     device = Device.objects.get(pk=id)
     results = defaultdict(str)
     results['man'] = str(device.manufacturer)
@@ -475,16 +474,13 @@ def get_drawing_dimensions(device):
     height = None
     width = dimensions.get('length', None)
     for key, v in dimensions.items():
-        print 'KEY:', key, 'VALUE:', v
         if 'diameter' in key and 'inner' in key:
             height = v
         elif not height and 'diameter' in key:
             height = v
         elif not height and 'thickness' in key:
             height = v
-            print 'YO WHAT TH EUF KUC', height, 'v', v, 'key', key
     height, width = float(height) * 1000, float(width) * 6
-    print 'HEIGHT:', height, 'WIDTH:', width
     return (height, width)
 
 

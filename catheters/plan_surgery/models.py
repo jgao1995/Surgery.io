@@ -149,7 +149,6 @@ def create_dependencies():
             dims_1 = getattr(device, 'dimensions', None)
             dims_2 = getattr(other, 'dimensions', None)
             if not (dims_1 and dims_2):
-                print 'invalid: no dimensions for either'
                 continue
             params_1 = json.loads(dims_1)[rule.field_1]
             params_2 = json.loads(dims_2)[rule.field_2]
@@ -172,7 +171,6 @@ def create_dependencies():
             if edge:
                 dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = edge)
                 dependence.save()
-                print 'Saved dependency between',device,'and',other
 
 
 def update_dependencies():
@@ -188,7 +186,6 @@ def update_dependencies():
             if len(rules) < 1:
                 # dependence = DeviceDependency(device_1 = device, device_2 = other, edgeType = 0)
 
-                print "Invalid Rule Graph"
                 continue
             dependence = DeviceDependency.filter(device_1 = device, device_2 = other)[0]
             # get the rule out
@@ -196,8 +193,6 @@ def update_dependencies():
             # parse the fields to compare out of each
             dims_1 = getattr(device, 'remaining_dimensions', None)
             dims_2 = getattr(other, 'remaining_dimensions', None)
-            if not (dims_1 and dims_2):
-                print 'invalid: no dimensions for either'
             params_1 = json.loads(dims_1)[rule.field_1]
             params_2 = json.loads(dims_2)[rule.field_2]
             edge = 0

@@ -10,8 +10,6 @@
         return;
       }
       $.getJSON('/dsearch?query='+escape(term), function(json) {
-        console.log(json['results']['name']);
-        console.log(json['results']['name'][0][1]);
         if (json.length == 0) {
           $("results").html("");
           return;

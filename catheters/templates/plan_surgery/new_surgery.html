@@ -25,13 +25,11 @@
     <script type="text/javascript"> 
       var devices = [];
       var add_device = function(id) {
-        console.log('first add device:' + id);
         devices.push(id);
         update_list();
         $.getJSON('/device/'+device+'/JSON', function(json) {
             var height = parseFloat(json['height']);
             var width = parseFloat(json['width']);
-            console.log('JSON:' + json['height'] + "::" + json['width'] + "::" + json['name']);
             add_device_to_canvas(id, height, width, json['name']);
           });
       };
@@ -45,10 +43,7 @@
         remove_device_from_canvas(id);
       }
       var update_list = function() {
-        console.log("called update list");
         var htmlOut = "";
-        console.log(devices.length);
-        console.log(devices);
         for (var i = 0; i < devices.length; i++) {
           device = devices[i];
           $.getJSON('/device/'+device+'/JSON', function(json) {
@@ -124,10 +119,6 @@
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
         var add_device_to_canvas = function(rect_id, dev_height, dev_width, name) {
-          console.log('rectangle id: ' + rect_id);
-          console.log("visualization called");
-          console.log('length: '+devices.length);
-          console.log('args:: '+dev_height + " | " + dev_width);
           var text = new fabric.Text(name, {
             fontSize: 10,
             fontWeight: 'bold', 
@@ -170,7 +161,6 @@
         var remove_device_from_canvas = function(rect_id) {
           var objects = canvas.getObjects();
             for (var i = 0; i < objects.length; ++i) { 
-                console.log(objects[i]._objects[0].id);
                 if (objects[i]._objects[0].id == rect_id) {
                     canvas.remove(objects[i]);
                 }
