@@ -24,6 +24,11 @@
     <script src = "https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.0/fabric.js" > </script>
     <script type="text/javascript"> 
       var devices = [];
+      function htmlDecode(input){
+        var e = document.createElement('div');
+        e.innerHTML = input;
+        return e.childNodes.length === 0 ? "" : e.childNodes[0].nodeValue;
+      }
       var add_device = function(id) {
         console.log('first add device:' + id);
         devices.push(id);
@@ -85,9 +90,18 @@
         }
       });
     window.onload = function() {
-        var json = unescape('{{surgery.canvas}}');
-        canvas.loadFromJSON(json);
-        canvas.renderAll.bind(canvas);
+        var r = /\\u([\d\w]{4})/gi;
+        var json = '{{surgery.canvas}}';
+        json = json.replace(r, function (match, grp) {
+            return String.fromCharCode(parseInt(grp, 16)); } );
+        json = htmlDecode(json);
+        console.log(json);
+        canvas.loadFromJSON(json, canvas.renderAll.bind(canvas), function(o, object) {
+          fabric.log(o, object);
+        });
+        // canvas.loadFromJSON(json);
+
+        // canvas.renderAll.bind(canvas);
     }
     </script>
       

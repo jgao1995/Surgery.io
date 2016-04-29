@@ -14,6 +14,7 @@ import json
 import code
 import urllib
 import requests
+from django.utils.text import unescape_entities
 
 from IPython import embed
 
@@ -183,7 +184,7 @@ def add_surgery(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         device_ids = json.loads(data['devices'])
-        canvas_json = json.loads(data['canvas'])
+        canvas_json = data['canvas']
         devices = []
         author = User.objects.get(pk=int(data['user_id']))
         surgery = Surgery(author=author, canvas=canvas_json)
@@ -246,7 +247,10 @@ def show_surgery(request, id):
     '''
     if not request.user.is_authenticated():
         return render(request, 'users/login_signup.html')
-    context = {'surgery': Surgery.objects.get(pk=id)}
+    surgery = Surgery.objects.get(pk=id)
+    canvas_json = unescape_entities(surgery.canvas)
+    context = {'surgery': surgery, 'canvas_json': canvas_json}
+
     return render(request, 'plan_surgery/show_surgery.html', context)
 
 
