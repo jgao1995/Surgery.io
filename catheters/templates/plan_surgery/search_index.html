@@ -12,13 +12,15 @@
       $.getJSON('/dsearch?query='+escape(term), function(json) {
         console.log(json['results']['name']);
         console.log(json['results']['name'][0][1]);
-        device = json['results']['name'][0][0] + ': ' + json['results']['name'][0][1];
         if (json.length == 0) {
           $("results").html("");
           return;
         }
         var htmlOut = "<li>"+(json['results']['name'].length)+" result(s)"+"</li>";
-        htmlOut += "<li><a href='/device/"+json['results']['name'][0][5]+"'>"+device+"</a></li>";
+        for (var i = 0; i < json['results']['name'].length; i++) {
+          device = json['results']['name'][i][0] + ': ' + json['results']['name'][i][1];
+          htmlOut += "<li><a href='/device/"+json['results']['name'][i][5]+"'>"+device+"</a></li>";
+        }
         htmlOut = "<ul class='sub-menu'>"+htmlOut+"</ul>";
         $("#results").html(htmlOut);
       });
