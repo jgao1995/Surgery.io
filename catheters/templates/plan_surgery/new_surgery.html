@@ -130,6 +130,7 @@
           console.log('args:: '+dev_height + " | " + dev_width);
           var text = new fabric.Text(name, {
             fontSize: 10,
+            fontWeight: 'bold', 
             color: 'black'
           });
           var rect = new fabric.Rect({
@@ -157,8 +158,9 @@
               //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
               var heightFit = obj.getHeight() > options.target.getHeight();
               var widthFit = obj.getWidth() >= options.target.getWidth();
-              obj.setColor(options.target.intersectsWithObject(obj) && heightFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
-              options.target.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
+              var collision = options.target.intersectsWithObject(obj) && heightFit || options.target.isContainedWithinObject(obj);
+              obj.item(1).setColor(collision ? 'green' : 'red');
+              options.target.item(1).setColor(collision ? 'green' : 'red');
 
             });
           }
