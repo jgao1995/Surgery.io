@@ -114,7 +114,7 @@ def all(request):
         else:
             dims = device.dimensions[0]
         for k in dims:
-            dims[k] = "%.2f" % (float(dims[k]) * conversion[units])
+            dims[k] = "%.4f" % (float(dims[k]) * conversion[units])
         results[device.product_type].append([device.manufacturer, device.brand_name, device.description, dims, device.id])
     for product_type in results:
         fields_order = results[product_type][0][3].keys()
@@ -313,7 +313,7 @@ def add_device(request):
 
     d = {}
     # USE INCHES as internal measurement. convert cm, Fr to in
-    conversion = {'cm': 0.393700787, 'Fr': 0.013123359580052493}
+    conversion = {'cm': 0.393700787, 'Fr': 0.013123359580052493, 'in': 1}
     for field in fields:
         unit = request.POST[field + '_unit']
         d[field] = conversion[unit]* float(request.POST[field])
@@ -325,7 +325,6 @@ def add_device(request):
 
     device = Device(manufacturer=manufacturer, brand_name=brand_name, description=description, dimensions=dimensions, product_type=device_type)
     device.save()
-
     # create new dependencies.
     createDependencies()
 
@@ -428,7 +427,7 @@ def get_drawing_dimensions(device):
         elif not height and 'thickness' in key:
             height = v
             print 'YO WHAT TH EUF KUC', height, 'v',v, 'key',key
-    height, width = float(height) * 300, float(width) * 0.8
+    height, width = float(height) * 1000, float(width) * 6
     print 'HEIGHT:',height, 'WIDTH:',width
     return (height, width)
 

@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^dsearch$', views.dynamic_search, name="JSON Results"),
     url(r'^device_search$', views.search_devices),
     url(r'^plan_surgery/$', views.plan_surgery, name='Plan Surgery'),
+    url(r'^plan_surgery/all$', views.all_surgeries, name='All Surgeries'),
     url(r'^plan_surgery/new', views.new_surgery),
     url(r'^plan_surgery/add_surgery', views.add_surgery),
     url(r'^device/(?P<id>[0-9]+)/$', views.show, name='Device show'),

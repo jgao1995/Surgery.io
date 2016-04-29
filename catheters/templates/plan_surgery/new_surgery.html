@@ -29,9 +29,8 @@
         devices.push(id);
         update_list();
         $.getJSON('/device/'+device+'/JSON', function(json) {
-            var height = parseInt(json['height']);
-            var width = parseInt(json['width']);
-            console.log('JSON BRUH:' + json);
+            var height = parseFloat(json['height']);
+            var width = parseFloat(json['width']);
             console.log('JSON:' + json['height'] + "::" + json['width']);
             add_device_to_canvas(id, height, width);
           });
@@ -151,7 +150,7 @@
               //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
               var heightFit = obj.getHeight() > options.target.getHeight();
               var widthFit = obj.getWidth() >= options.target.getWidth();
-              obj.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
+              obj.setColor(options.target.intersectsWithObject(obj) && heightFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
               options.target.setColor(options.target.intersectsWithObject(obj) && heightFit && widthFit || options.target.isContainedWithinObject(obj) ? 'green' : 'red');
 
             });
