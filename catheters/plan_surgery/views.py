@@ -479,7 +479,7 @@ def get_drawing_dimensions(device):
         elif not height and 'thickness' in key:
             height = v
             print 'YO WHAT TH EUF KUC', height, 'v', v, 'key', key
-    height, width = float(height) * 300, float(width) * 0.5
+    height, width = float(height) * 1000, float(width) * 6
     print 'HEIGHT:', height, 'WIDTH:', width
     return (height, width)
 
