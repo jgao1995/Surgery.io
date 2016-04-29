@@ -132,20 +132,18 @@
             fontSize: 20
           });
           var rect = new fabric.Rect({
-            
             height: dev_height,
             width: dev_width,
             opacity: 0.5, 
-            hasBorders: false,
-            hasControls: false,
-            hasRotatingPoint: false,
             fill: 'red',
             id: rect_id
           });
           var group = new fabric.Group([ text, rect ], {
             left: 150,
             top: 100,
-            angle: -10
+            hasBorders: false,
+            hasControls: false,
+            hasRotatingPoint: false
           });
           canvas.add(group);
           canvas.on({'object:moving': onChange});
