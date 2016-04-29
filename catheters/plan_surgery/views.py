@@ -152,17 +152,17 @@ def add_device_type(request):
         if DeviceType.objects.filter(name__iexact=request.POST['name']).exists():
             messages.add_message(request, messages.ERROR, 'Device type with name {} already exists.'.format(
                 request.POST['name']), fail_silently=True)
-            return redirect('add_device_type')
+            return redirect('add device type')
         num_fields = len(request.POST) - 2
         fields = []
         for i in range(1, num_fields + 1):
             # interest_i
             fields.append(request.POST['field_{}'.format(i)].strip().lower())
         required = ['thickness', 'diameter']
-        if 'length' not in fields or (not any(x not in field for field in fields for x in required)):
+        if 'length' not in fields or (not any([x not in field for field in fields for x in required])):
             messages.add_message(
-                request, message.ERROR, 'Device type needs a thickness / diameter')
-            return redirect('add_device_type')
+                request, messages.ERROR, 'Device type needs a thickness / diameter and length')
+            return redirect('add device type')
 
         name = request.POST['name']
         new_type = DeviceType(name=name, fields=json.dumps(fields))
@@ -183,13 +183,15 @@ def add_surgery(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         device_ids = json.loads(data['devices'])
+        canvas_json = json.loads(data['canvas'])
         devices = []
         author = User.objects.get(pk=int(data['user_id']))
-        surgery = Surgery(author=author)
+        surgery = Surgery(author=author, canvas=canvas_json)
         surgery.save()
         for dev_id in device_ids:
             surgery.devices.add(Device.objects.get(pk=dev_id))
         surgery.save()
+
         return redirect('All Surgeries')
     if not request.user.is_authenticated():
         messages.add_message(
@@ -236,6 +238,16 @@ def show_add_device_2(request):
     fields = json.loads(device_type.fields)
     context = {'fields': fields, "device_type_name": device_type_name}
     return render(request, 'device_management/add_device_2.html', context)
+
+
+def show_surgery(request, id):
+    '''
+    Renders the show page for a given surgery ID
+    '''
+    if not request.user.is_authenticated():
+        return render(request, 'users/login_signup.html')
+    context = {'surgery': Surgery.objects.get(pk=id)}
+    return render(request, 'plan_surgery/show_surgery.html', context)
 
 
 def show(request, id, message=""):

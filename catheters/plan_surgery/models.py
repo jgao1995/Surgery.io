@@ -82,6 +82,7 @@ class Surgery(models.Model):
     devices = models.ManyToManyField(Device)
     created_date = models.DateTimeField(default=timezone.now)
     author = models.ForeignKey(User)
+    canvas = models.CharField(max_length=20000) # JSON string of canvas.
 
 def add_device_to_database(manufacturer, brand_name, description, product_type, dims=None):
     '''
