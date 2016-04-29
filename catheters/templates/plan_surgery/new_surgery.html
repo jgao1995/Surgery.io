@@ -89,7 +89,7 @@
         document.getElementById('addsurgery').addEventListener('click', function(e){submit()}); 
     }
     var add_surgery = function (author_id) {
-        $.post('/plan_surgery/add_surgery', JSON.stringify({'devices': JSON.stringify(devices), 'user_id': author_id}), function (response, status) {
+        $.post('/plan_surgery/add_surgery', JSON.stringify({'devices': JSON.stringify(devices), 'user_id': author_id, 'canvas': JSON.stringify(canvas.toJSON())}), function (response, status) {
           window.location.href = '/plan_surgery/all';
         });
     }
