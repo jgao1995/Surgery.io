@@ -89,7 +89,7 @@
         document.getElementById('addsurgery').addEventListener('click', function(e){submit()}); 
     }
     var add_surgery = function (author_id) {
-        $.post('/plan_surgery/add_surgery', JSON.stringify({'devices': JSON.stringify(devices), 'user_id': author_id, 'canvas': JSON.stringify(canvas.toJSON())}), function (response, status) {
+        $.post('/plan_surgery/add_surgery', JSON.stringify({'devices': JSON.stringify(devices), 'user_id': author_id}), function (response, status) {
           window.location.href = '/plan_surgery/all';
         });
     }
@@ -107,8 +107,8 @@
           <li class="list-group-item">
           <a id="device" href="/device/{{ d.id }}/" name="{{ d.id }}"> {{ d.brand_name }} {{ d.manufacturer }} {{ d.description }} {{ d.product_type }} </a> <button type="button" onclick="add_device({{d.id}});" class="btn btn-sm">Add Device</button>
           </li>
-	      {% endfor %}
-	    </ul>
+        {% endfor %}
+      </ul>
     </div>
 
     <div id='active_devices'>
@@ -123,14 +123,59 @@
       <canvas id="visual_surgery" height="425" width="500"> </canvas>
       <script>
         var canvas = this.__canvas = new fabric.Canvas('visual_surgery');
-        console.log("Canvas: {{surgery.canvas}}");
-        canvas.loadFromJSON("{{ surgery.canvas }}");
+        var add_device_to_canvas = function(rect_id, dev_height, dev_width, name) {
+          console.log('rectangle id: ' + rect_id);
+          console.log("visualization called");
+          console.log('length: '+devices.length);
+          console.log('args:: '+dev_height + " | " + dev_width);
+          var text = new fabric.Text(name, {
+            fontSize: 10,
+            fontWeight: 'bold', 
+            color: 'black', 
+            id: rect_id
+          });
+          var rect = new fabric.Rect({
+            height: dev_height,
+            width: dev_width,
+            opacity: 0.5, 
+            fill: 'red', 
+            id: rect_id
+          });
+          var group = new fabric.Group([ text, rect ], {
+            left: 150,
+            top: 100,
+            hasBorders: false,
+            hasControls: false,
+            hasRotatingPoint: false
+          });
+          canvas.add(group);
+          canvas.on({'object:moving': onChange});
+          
+          function onChange(options) {
 
-        // re-render the canvas
-        canvas.renderAll();
+          options.target.setCoords();
+          canvas.forEachObject(function(obj) {
+            if (obj === options.target) return;
+              //obj.setOpacity(options.target.intersectsWithObject(obj) ? 0.5 : 1);
+              var heightFit = obj.getHeight() > options.target.getHeight();
+              var widthFit = obj.getWidth() >= options.target.getWidth();
+              var collision = options.target.intersectsWithObject(obj) && heightFit || options.target.isContainedWithinObject(obj);
+              obj.item(1).setColor(collision ? 'green' : 'red');
+              options.target.item(1).setColor(collision ? 'green' : 'red');
 
-        // optional
-        canvas.calculateOffset();
+            });
+          }
+        }
+
+        var remove_device_from_canvas = function(rect_id) {
+          var objects = canvas.getObjects();
+            for (var i = 0; i < objects.length; ++i) { 
+                console.log(objects[i]._objects[0].id);
+                if (objects[i]._objects[0].id == rect_id) {
+                    canvas.remove(objects[i]);
+                }
+            }
+        }
       </script>
     </div>
 
