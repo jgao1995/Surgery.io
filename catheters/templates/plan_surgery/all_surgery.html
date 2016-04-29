@@ -9,7 +9,7 @@
     <ul class="list-group">
 
     {% for surgery in surgeries %}
-      <li class="list-group-item">Surgery created by <a href="/user/{{surgery.author.id}}">{{ surgery.author.username }}</a> at {{ surgery.date }}</li>
+      <li class="list-group-item"> <a href="/surgery/{{surgery.id}}">{{ surgery.id }}</a>  Surgery created by <a href="/user/{{surgery.author.id}}">{{ surgery.author.username }}</a> at {{ surgery.date }}</li>
     {% endfor %}
   </div>
 </body>

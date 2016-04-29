@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^plan_surgery/all$', views.all_surgeries, name='All Surgeries'),
     url(r'^plan_surgery/new', views.new_surgery),
     url(r'^plan_surgery/add_surgery', views.add_surgery),
+    url(r'^surgery/(?P<id>[0-9]+)/$', views.show_surgery, name='Surgery show'),
     url(r'^device/(?P<id>[0-9]+)/$', views.show, name='Device show'),
     url(r'^device/(?P<id>[0-9]+)/JSON$', views.add_device_to_surgery),
     url(r'^device/(?P<id>[0-9]+)/add_video', views.add_video),
